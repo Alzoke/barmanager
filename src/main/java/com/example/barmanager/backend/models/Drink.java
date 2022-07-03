@@ -2,6 +2,7 @@ package com.example.barmanager.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,6 @@ public class  Drink{
     public String strGlass;
     @JsonIgnore
     public String strInstructions;
-
     public String strDrinkThumb;
 
     public String strIngredient1;

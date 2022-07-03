@@ -16,19 +16,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class DrinkDTOAssembler implements RepresentationModelAssembler<DrinkDTO, EntityModel<DrinkDTO>>
-{
-
+public class DrinkDTOAssembler implements RepresentationModelAssembler<DrinkDTO, EntityModel<DrinkDTO>> {
     @Override
-    public EntityModel<DrinkDTO> toModel(DrinkDTO entity)
-    {
+    public EntityModel<DrinkDTO> toModel(DrinkDTO entity) {
         return EntityModel.of(entity,
                 linkTo(methodOn(DrinkController.class).getDrink(entity.getDrink().getIdDrink())).withSelfRel(),
                 linkTo(methodOn(DrinkController.class).getAllDrinks()).withRel("all products"));    }
 
     @Override
-    public CollectionModel<EntityModel<DrinkDTO>> toCollectionModel(Iterable<? extends DrinkDTO> entities)
-    {
+    public CollectionModel<EntityModel<DrinkDTO>> toCollectionModel(Iterable<? extends DrinkDTO> entities) {
         List<DrinkDTO> drinkDTOS = (List<DrinkDTO>) entities;
         List<EntityModel<DrinkDTO>> drinksEntities =
                 drinkDTOS.stream().map(drinkDTO -> this.toModel(drinkDTO))

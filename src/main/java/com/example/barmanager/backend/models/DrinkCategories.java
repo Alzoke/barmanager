@@ -19,6 +19,7 @@ public class DrinkCategories {
 
     @JsonRootName("Root")
     public static class categoryList{
+
         @JsonProperty("drinks")
         public ArrayList<DrinkCategories> categories;
     }

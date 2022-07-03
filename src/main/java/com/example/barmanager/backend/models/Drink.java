@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Document("drinks")
-public class Drink{
+public class  Drink{
     @Id
     public String idDrink;
     public String strDrink;

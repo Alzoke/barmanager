@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public abstract class Person {
-    private Long id;
+    private int idNumber;
     private String name;
-    private String role;
 
-    public Person(String name, String role) {
+
+    public Person(String name,int idNumber) {
         this.name = name;
-        this.role = role;
+        this.idNumber = idNumber;
+
     }
+
 }

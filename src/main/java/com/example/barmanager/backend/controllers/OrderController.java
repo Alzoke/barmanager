@@ -76,7 +76,7 @@ public class OrderController
                 .map(OrderDto::new)
                 .map(orderDtoAssembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new CustomerNotFoundException(id));
+                .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
 }

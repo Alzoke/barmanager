@@ -14,9 +14,24 @@ public class Order
 {
     @Id private String orderId;
 
-    private ArrayList<String> drinkIds;
+    @DocumentReference
+    private ArrayList<BarDrink> orderedDrinks;
     private double bill;
     private eOrderStatus orderStatus;
+
+    public double getBill()
+    {
+      return bill;
+    }
+
+    public void setBill()
+    {
+        for ( BarDrink barDrink : orderedDrinks )
+        {
+            this.bill += barDrink.getPrice();
+        }
+
+    }
 
     @DocumentReference
     private Customer customer;
@@ -24,13 +39,18 @@ public class Order
     public Order()
     {
         orderStatus = eOrderStatus.Open;
+        this.orderedDrinks = new ArrayList<>();
+
     }
 
-    public Order(Customer customer,ArrayList<String> drinksIds)
+    public Order(Customer customer,ArrayList<BarDrink> orderedDrinks)
     {
         this();
         this.customer = customer;
-        this.drinkIds = drinksIds;
+        this.orderedDrinks = orderedDrinks;
+        setBill();
 
     }
+
+
 }

@@ -15,19 +15,10 @@ public class Customer extends Person
 {
    @Id private String customerId;
 
-   @DocumentReference
-   private ArrayList<Order> orders;
+//   @DocumentReference
+   private ArrayList<String> orders;
 
-/*   public void addOrder(Order order)
-   {
-      orders.add(order);
-   }*/
 
- /*  public void removeOrder(Order order)
-   {
-      orders.remove(order);
-   }
-*/
    public Customer(String name, int idNumber)
    {
       super(name, idNumber);

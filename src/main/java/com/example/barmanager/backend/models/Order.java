@@ -19,12 +19,28 @@ public class Order
     private double bill;
     private eOrderStatus orderStatus;
 
+    public double getBill()
+    {
+      return bill;
+    }
+
+    public void setBill()
+    {
+        for ( BarDrink barDrink : orderedDrinks )
+        {
+            this.bill += barDrink.getPrice();
+        }
+
+    }
+
     @DocumentReference
     private Customer customer;
 
     public Order()
     {
         orderStatus = eOrderStatus.Open;
+        this.orderedDrinks = new ArrayList<>();
+
     }
 
     public Order(Customer customer,ArrayList<BarDrink> orderedDrinks)
@@ -32,6 +48,7 @@ public class Order
         this();
         this.customer = customer;
         this.orderedDrinks = orderedDrinks;
+        setBill();
 
     }
 

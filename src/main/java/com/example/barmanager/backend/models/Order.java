@@ -14,7 +14,8 @@ public class Order
 {
     @Id private String orderId;
 
-    private ArrayList<String> drinkIds;
+    @DocumentReference
+    private ArrayList<BarDrink> orderedDrinks;
     private double bill;
     private eOrderStatus orderStatus;
 
@@ -26,11 +27,13 @@ public class Order
         orderStatus = eOrderStatus.Open;
     }
 
-    public Order(Customer customer,ArrayList<String> drinksIds)
+    public Order(Customer customer,ArrayList<BarDrink> orderedDrinks)
     {
         this();
         this.customer = customer;
-        this.drinkIds = drinksIds;
+        this.orderedDrinks = orderedDrinks;
 
     }
+
+
 }

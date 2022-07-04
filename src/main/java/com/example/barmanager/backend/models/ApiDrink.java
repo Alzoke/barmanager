@@ -1,6 +1,5 @@
 package com.example.barmanager.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -9,14 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Document("drinks")
-public class Drink{
+public class ApiDrink {
     @Id
     public String idDrink;
     public String strDrink;
@@ -75,6 +73,6 @@ public class Drink{
 
     @JsonRootName("Root")
     public static class DrinkList{
-        public ArrayList<Drink> drinks;
+        public ArrayList<ApiDrink> drinks;
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @JsonPropertyOrder({"id","name","category","isAlcoholic","ingredients","price","image"})
 public class DrinkDTO  {
     @JsonIgnore
-    private final Drink drink;
+    private final ApiDrink drink;
 
     public List<String> getIngredients() throws NoSuchFieldException, IllegalAccessException {
         List<String> ingredients = new ArrayList<>();
@@ -51,12 +51,11 @@ public class DrinkDTO  {
 
         for (int i = 0; i < 15; i++) {
             String fieldName = String.format("strIngredient%s",(i+1));
-            System.out.println(drink.getClass().getDeclaredField(fieldName).toString());
             if (drink.getClass().getDeclaredField(fieldName).get(drink) != null){
                 ingredientCount++;
             }
         }
-        return  (Double) ingredientCount * 10;
+        return ingredientCount * 10;
     }
 
 }

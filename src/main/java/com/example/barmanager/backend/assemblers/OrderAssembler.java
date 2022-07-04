@@ -1,6 +1,5 @@
 package com.example.barmanager.backend.assemblers;
 
-import com.example.barmanager.backend.controllers.DrinkController;
 import com.example.barmanager.backend.controllers.OrderController;
 import com.example.barmanager.backend.models.Order;
 import org.springframework.hateoas.CollectionModel;

@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 @Component
 public class SeedDB implements CommandLineRunner{
     private final CocktailDBAPIService drinkService;
@@ -70,5 +73,6 @@ public class SeedDB implements CommandLineRunner{
         barDrinkRepo.save(barDrink1);
         barDrinkRepo.save(barDrink2);
 
+        List<String> categories = drinkService.fetchDrinkCategories().get();
     }
 }

@@ -19,12 +19,11 @@ public class InventoryController {
 
     private final InventoryRepo barDrinkRepo;
     private final BarDrinkAssembler barDrinkAssembler;
-    private final CocktailDBAPIService cocktailAPIService;
+
 
     public InventoryController(InventoryRepo barDrinkRepo, BarDrinkAssembler barDrinkAssembler, CocktailDBAPIService cocktailAPIService) {
         this.barDrinkRepo = barDrinkRepo;
         this.barDrinkAssembler = barDrinkAssembler;
-        this.cocktailAPIService = cocktailAPIService;
     }
 
     @PostMapping("/inventory/")

@@ -1,6 +1,12 @@
 package com.example.barmanager.backend.service;
 
 import com.example.barmanager.backend.models.ApiDrink;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -46,23 +53,33 @@ public class CocktailDBAPIService {
         return actualDrinks;
     }
 
-//    @Async
-//    public CompletableFuture<List<DrinkIngredients>> fetchDrinkIngredients(){
-//        String url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list";
-//        DrinkIngredients.ingredientList ingredientResponse = this.template.getForObject(url, DrinkIngredients.ingredientList.class);
-//        List<DrinkIngredients> ingredients = new ArrayList<>(ingredientResponse.drinkIngredients);
-//
-//        return CompletableFuture.completedFuture(ingredients);
-//    }
+    @Async
+    public CompletableFuture<List<String>> fetchDrinkIngredients(){
+        List<String> ingredients = new ArrayList<>();
+        String url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list";
+        String response = this.template.getForObject(url, String.class);
+        JSONObject jsonObject = new JSONObject(response);
+        JSONArray jsonArray = jsonObject.getJSONArray("drinks");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            ingredients.add(jsonArray.getJSONObject(i).getString("strIngredient1"));
+        }
 
-//    @Async
-//    public CompletableFuture<List<DrinkCategories>> fetchDrinkCategories(){
-//        String url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list";
-//        DrinkCategories.categoryList categoriesResponse = this.template.getForObject(url, DrinkCategories.categoryList.class);
-//        List<DrinkCategories> categories = new ArrayList(categoriesResponse.categories);
-//
-//        return CompletableFuture.completedFuture(categories);
-//    }
+        return CompletableFuture.completedFuture(ingredients);
+    }
+
+    @Async
+    public CompletableFuture<List<String>> fetchDrinkCategories(){
+        List<String> categoryNames = new ArrayList<>();
+        String url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list";
+        String response = this.template.getForObject(url, String.class);
+        JSONObject jsonObject = new JSONObject(response);
+        JSONArray jsonArray = jsonObject.getJSONArray("drinks");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            categoryNames.add(jsonArray.getJSONObject(i).getString("strCategory"));
+        }
+
+        return CompletableFuture.completedFuture(categoryNames);
+    }
 
     @Async
     public CompletableFuture<List<ApiDrink>> fetchDrinksListByCategory(String categoryName){
@@ -110,20 +127,40 @@ public class CocktailDBAPIService {
 
     @Async
     public CompletableFuture<ApiDrink> fetchRandomDrink(){
-        String url = "www.thecocktaildb.com/api/json/v1/1/search.php?i=vodka";
+        String url = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
+        logger.info(url);
         ApiDrink.DrinkList randomDrink = this.template.getForObject(url, ApiDrink.DrinkList.class);
-
+        logger.info(randomDrink.drinks.toString());
         return CompletableFuture.completedFuture(randomDrink.drinks.get(0));
     }
 
     @Async
-    public CompletableFuture<List<ApiDrink>> fetchDrinksByAlcoholic(boolean isAlcoholic){
-        String url = String.format("www.thecocktaildb.com/api/json/v1/1/filter.php?a=%s",
-                isAlcoholic ? "Alcoholic" : "Non_Alcoholic");
+    public CompletableFuture<List<ApiDrink>> fetchDrinksByAlcoholic(String alcoholFilter){
+        String url = String.format("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=%s", alcoholFilter);
+        logger.info(url);
         ApiDrink.DrinkList response = this.template.getForObject(url, ApiDrink.DrinkList.class);
         List<ApiDrink> partialDrinks = new ArrayList(response.drinks);
         List<ApiDrink> drinks = getActualDrinks(partialDrinks);
 
         return CompletableFuture.completedFuture(drinks);
+    }
+
+    @Async
+    public CompletableFuture<List<ApiDrink>> fetchAllDrinks(){
+        List<ApiDrink> apiDrinks = new ArrayList<>();
+        try {
+            List<String> categories = fetchDrinkCategories().get();
+            for (String ingredient : categories) {
+                List<ApiDrink> drinkList = fetchDrinksListByCategory(ingredient).get();
+                for (ApiDrink drink : drinkList){
+                    apiDrinks.add(drink);
+                }
+            }
+
+            return CompletableFuture.completedFuture(apiDrinks);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return CompletableFuture.completedFuture(null);
+        }
     }
 }

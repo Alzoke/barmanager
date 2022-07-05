@@ -1,13 +1,18 @@
 package com.example.barmanager.backend.repositories;
 
+import com.example.barmanager.backend.models.BarDrink;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
+import com.example.barmanager.backend.queryresults.DrinkCount;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import java.util.List;
 
 @Component
 public class CustomOrderRepository implements ICustomOrderRepository
@@ -37,7 +42,21 @@ public class CustomOrderRepository implements ICustomOrderRepository
         System.out.println(result)*/;
         System.out.println(customerUpdateResult);
         System.out.println(OrderUpdateResult);
-
-
     }
+
+    @Override
+    public List<DrinkCount> getMostOrderedDrinks() {
+        UnwindOperation unwindOperation = unwind("orderedDrinks");
+        GroupOperation groupOperation = group("orderedDrinks").count().as("count");
+        ProjectionOperation projectionOperation = project().andExpression("_id").as("orderedDrinks")         // _id refers to the unwound category (i.e, cat1)
+                .andExpression("count").as("count");
+
+        Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
+
+        AggregationResults<DrinkCount> results = mongoTemplate.aggregate(aggregation, BarDrink.class, DrinkCount.class);
+
+        return results.getMappedResults();
+    }
+
+
 }

@@ -50,8 +50,8 @@ public class DrinkSupplierController {
     }
 
     @GetMapping("/supplier/category")
-    public ResponseEntity<?> getAllDrinksByCategory(@RequestParam String param){
-        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksListByCategory(param);
+    public ResponseEntity<?> getAllDrinksByCategory(@RequestParam String category){
+        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksListByCategory(category);
         try {
             List<ApiDrink> drinks = drinksFuture.get();
 
@@ -67,8 +67,8 @@ public class DrinkSupplierController {
     }
 
     @GetMapping("/supplier/ingredient")
-    public ResponseEntity<?> getAllDrinksByIngredient(@RequestParam String param){
-        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksListByIngredient(param);
+    public ResponseEntity<?> getAllDrinksByIngredient(@RequestParam String ingredient){
+        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksListByIngredient(ingredient);
         try {
             List<ApiDrink> drinks = drinksFuture.get();
 
@@ -84,8 +84,8 @@ public class DrinkSupplierController {
     }
 
     @GetMapping("/supplier/alcoholic")
-    public ResponseEntity<?> getAllDrinksByAlcoholic(@RequestParam String param){
-        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksByAlcoholic(param);
+    public ResponseEntity<?> getAllDrinksByAlcoholic(@RequestParam String alcoholicFilter){
+        CompletableFuture<List<ApiDrink>> drinksFuture = drinkService.fetchDrinksByAlcoholic(alcoholicFilter);
         try {
             List<ApiDrink> drinks = drinksFuture.get();
 

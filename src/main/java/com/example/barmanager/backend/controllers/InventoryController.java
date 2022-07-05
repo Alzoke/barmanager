@@ -3,6 +3,8 @@ package com.example.barmanager.backend.controllers;
 import com.example.barmanager.backend.assemblers.BarDrinkAssembler;
 import com.example.barmanager.backend.exceptions.DrinkNotFoundException;
 import com.example.barmanager.backend.models.BarDrink;
+import com.example.barmanager.backend.queryresults.CountByCategory;
+import com.example.barmanager.backend.repositories.ICustomInventoryRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 public class InventoryController {
 
     private final InventoryRepo inventoryRepo;
+    private final ICustomInventoryRepository customInventoryRepository;
     private final BarDrinkAssembler barDrinkAssembler;
     private final Logger logger;
 
 
-    public InventoryController(InventoryRepo barDrinkRepo, BarDrinkAssembler barDrinkAssembler) {
+    public InventoryController(InventoryRepo barDrinkRepo, ICustomInventoryRepository customInventoryRepository, BarDrinkAssembler barDrinkAssembler) {
         this.inventoryRepo = barDrinkRepo;
+        this.customInventoryRepository = customInventoryRepository;
         this.barDrinkAssembler = barDrinkAssembler;
         this.logger = LoggerFactory.getLogger(InventoryController.class);
     }
@@ -88,4 +93,18 @@ public class InventoryController {
     public ResponseEntity<CollectionModel<EntityModel<BarDrink>>> getDrinksFilteredByPriceRange(@RequestParam Double min, Double max){
         return ResponseEntity.ok(barDrinkAssembler.toCollectionModel(inventoryRepo.findByPriceBetween(min,max)));
     }
+
+    @GetMapping("/inventory/sortedByPrice")
+    public ResponseEntity<CollectionModel<EntityModel<BarDrink>>> getDrinksSortedByPrice(){
+        return ResponseEntity.ok(barDrinkAssembler.toCollectionModel(inventoryRepo.findByOrderByPriceAsc()));
+    }
+
+
+    @GetMapping("/inventory/groupCountByCategory/")
+    public ResponseEntity<List<CountByCategory>> getInventoryCountBy(){
+        return ResponseEntity.ok(customInventoryRepository.getCountGroupByCategory());
+    }
+
+
+
 }

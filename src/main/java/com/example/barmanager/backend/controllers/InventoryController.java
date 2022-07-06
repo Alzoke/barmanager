@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class InventoryController {
@@ -103,6 +104,18 @@ public class InventoryController {
     @GetMapping("/inventory/groupCountByCategory/")
     public ResponseEntity<List<CountByCategory>> getInventoryCountBy(){
         return ResponseEntity.ok(customInventoryRepository.getCountGroupByCategory());
+    }
+
+    @GetMapping("/inventory/filter")
+    public ResponseEntity<CollectionModel<EntityModel<BarDrink>>> getFilteredInventory(
+                                                  @RequestParam Optional<String> category,
+                                                  @RequestParam Optional<String> ingredient,
+                                                  @RequestParam Optional<String> alcoholFilter,
+                                                  @RequestParam Optional<Double> minPrice,
+                                                  @RequestParam Optional<Double> maxPrice){
+
+        return ResponseEntity.ok(barDrinkAssembler.toCollectionModel(
+                customInventoryRepository.getFilteredByMultipleParams(category, ingredient, alcoholFilter, minPrice, maxPrice)));
     }
 
 

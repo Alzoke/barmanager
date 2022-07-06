@@ -64,11 +64,11 @@ public class SeedDB implements CommandLineRunner{
 //        }
 //        this.logger.info("Completed fetching all drinks from the API , Current time : " + LocalDateTime.now());
 
-        BarDrink barDrink1 = new BarDrink("11007","Margarita","Cocktail","Alcoholic",new String[]{"Vodka","Gin"},"image",1222.0,"Round Glass");
-        BarDrink barDrink2 = new BarDrink("11118","Blue Margarita","Cocktail","Alcoholic",new String[]{"Pisco","Salt","Vodka"},"image",1222.0,"Round Glass");
-        BarDrink barDrink3 = new BarDrink("12345","Crimson Vodka","Ordinary Drink","Alcoholic", new String[]{"Blood","Tears","Vodka"},null,66.6,"Bare hands");
-        barDrinkRepo.save(barDrink1);
-        barDrinkRepo.save(barDrink2);
-        barDrinkRepo.save(barDrink3);
+//        BarDrink barDrink1 = new BarDrink("11007","Margarita","Cocktail","Alcoholic",new String[]{"Vodka","Gin"},"image",1222.0,"Round Glass");
+//        BarDrink barDrink2 = new BarDrink("11118","Blue Margarita","Cocktail","Alcoholic",new String[]{"Pisco","Salt","Vodka"},"image",1222.0,"Round Glass");
+//        BarDrink barDrink3 = new BarDrink("12345","Crimson Vodka","Ordinary Drink","Alcoholic", new String[]{"Blood","Tears","Vodka"},null,66.6,"Bare hands");
+//        barDrinkRepo.save(barDrink1);
+//        barDrinkRepo.save(barDrink2);
+//        barDrinkRepo.save(barDrink3);
     }
 }

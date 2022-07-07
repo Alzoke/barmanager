@@ -15,4 +15,11 @@ public class DrinkAdvice {
         return dnfe.getMessage();
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NewDrinkCreationException.class)
+    String drinkNotFoundHandler(NewDrinkCreationException creationException){
+        return creationException.getMessage();
+    }
+
 }

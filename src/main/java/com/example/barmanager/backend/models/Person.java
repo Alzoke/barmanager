@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class Person {
     private int idNumber;
-    private String name;
+    private String firstName;
+    private String lastName;
 
-
-    public Person(String name,int idNumber) {
-        this.name = name;
+    public Person(int idNumber, String firstName, String lastName)
+    {
         this.idNumber = idNumber;
-
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
-
 }

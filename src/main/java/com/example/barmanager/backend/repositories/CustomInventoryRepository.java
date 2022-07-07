@@ -25,7 +25,8 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
                 group("category").count().as("count"),
                 project("count").and("category"));
 
-        AggregationResults<CountByCategory> results = mongoTemplate.aggregate(aggregation, BarDrink.class, CountByCategory.class);
+        AggregationResults<CountByCategory> results = mongoTemplate.aggregate(aggregation,
+                BarDrink.class, CountByCategory.class);
 
         return results.getMappedResults();
     }

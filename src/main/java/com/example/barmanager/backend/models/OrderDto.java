@@ -13,7 +13,7 @@ public class OrderDto
 
     public String getOrderName()
     {
-        return String.format("%s's order",order.getCustomer().getName());
+        return String.format("%s's order",order.getCustomer().getFirstName());
     }
 
     public int numberOfOrderedItems()

@@ -6,6 +6,7 @@ import com.example.barmanager.backend.models.BarDrink;
 import com.example.barmanager.backend.queryresults.CountByCategory;
 import com.example.barmanager.backend.repositories.ICustomInventoryRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
+import com.example.barmanager.backend.service.InventorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
@@ -25,26 +26,42 @@ public class InventoryController {
     private final InventoryRepo inventoryRepo;
     private final ICustomInventoryRepository customInventoryRepository;
     private final BarDrinkAssembler barDrinkAssembler;
+    private final InventorService inventorService;
     private final Logger logger;
 
 
-    public InventoryController(InventoryRepo barDrinkRepo, ICustomInventoryRepository customInventoryRepository, BarDrinkAssembler barDrinkAssembler) {
+    public InventoryController(InventoryRepo barDrinkRepo, ICustomInventoryRepository customInventoryRepository, BarDrinkAssembler barDrinkAssembler, InventorService inventorService) {
         this.inventoryRepo = barDrinkRepo;
         this.customInventoryRepository = customInventoryRepository;
         this.barDrinkAssembler = barDrinkAssembler;
+        this.inventorService = inventorService;
         this.logger = LoggerFactory.getLogger(InventoryController.class);
     }
 
     @PostMapping("/inventory/")
     public ResponseEntity<?> createBarDrink(@RequestBody BarDrink barDrink){
-        EntityModel<BarDrink> drinkEntity = barDrinkAssembler.toModel(inventoryRepo.save(barDrink));
+        if ( inventorService.newDrinkValidation(barDrink) )
+        {
+            logger.info("Saving: " + barDrink);
+            EntityModel<BarDrink> drinkEntity = barDrinkAssembler.toModel(inventoryRepo.save(barDrink));
+            try {
+                return ResponseEntity.created(new URI(
+                        drinkEntity.getRequiredLink(IanaLinkRelations.SELF).getHref())).body(drinkEntity);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        return ResponseEntity.internalServerError().body("Error while creating and saving the drink");
+
+
+       /* EntityModel<BarDrink> drinkEntity = barDrinkAssembler.toModel(inventoryRepo.save(barDrink));
         try {
             return ResponseEntity.created(new URI(
                     drinkEntity.getRequiredLink(IanaLinkRelations.SELF).getHref())).body(drinkEntity);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error while creating and saving the drink");
-        }
+        }*/
     }
 
     @GetMapping("/inventory/{id}")

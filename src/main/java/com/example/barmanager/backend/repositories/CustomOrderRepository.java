@@ -20,21 +20,23 @@ public class CustomOrderRepository implements ICustomOrderRepository
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    ICustomerRepository customerRepository;
+
     @Override
-    public void saveNewOrder(Order order,Customer customer)
+    public void saveNewOrder(Order order)
     {
         Order savedOrder = mongoTemplate.save(order);
-        Customer savedCustomer = mongoTemplate.save(customer);
-        System.out.println(savedCustomer);
-        System.out.println(savedOrder);
+//        Customer savedCustomer = mongoTemplate.save(customer);
+
         UpdateResult customerUpdateResult = mongoTemplate.update(Customer.class)
                 .matching(Criteria.where("_id")
-                        .is(customer.getCustomerId()))
-                .apply(new Update().push("orders", order.getOrderId())).first();
+                        .is(order.getCustomer().getCustomerId()))
+                .apply(new Update().push("ordersIds", order.getOrderId())).first();
 
         UpdateResult OrderUpdateResult = mongoTemplate.update(Order.class)
                 .matching(Criteria.where("_id").is(order.getOrderId()))
-                .apply(new Update().set("customer",customer)).first();
+                .apply(new Update().set("customer",order.getCustomer())).first();
 
        /* UpdateResult result = mongoTemplate.update(Order.class)
                 .matching(Criteria.where("id").is(order.getOrderId()))
@@ -53,7 +55,8 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
         Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
 
-        AggregationResults<DrinkCount> results = mongoTemplate.aggregate(aggregation, BarDrink.class, DrinkCount.class);
+        AggregationResults<DrinkCount> results =
+                mongoTemplate.aggregate(aggregation, BarDrink.class, DrinkCount.class);
 
         return results.getMappedResults();
     }

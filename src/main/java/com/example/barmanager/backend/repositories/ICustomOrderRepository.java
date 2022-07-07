@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface ICustomOrderRepository
 {
-    void saveNewOrder(Order order, Customer customer);
+    void saveNewOrder(Order order);
+//    void saveNewOrder(Order order, Customer customer);
     List<DrinkCount> getMostOrderedDrinks();
 }

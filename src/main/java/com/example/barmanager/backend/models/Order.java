@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 @Data
-@Document("Orders")
+@Document("orders")
 public class Order
 {
     @Id private String orderId;
@@ -42,7 +42,18 @@ public class Order
         this.orderedDrinks = new ArrayList<>();
 
     }
+    public void addDrinkToOrder(BarDrink barDrink)
+    {
+        this.orderedDrinks.add(barDrink);
+        this.setBill(getBill() + barDrink.getPrice());
+    }
+    public Order(Customer customer)
+    {
+        this();
+        this.customer = customer;
+        setBill();
 
+    }
     public Order(Customer customer,ArrayList<BarDrink> orderedDrinks)
     {
         this();

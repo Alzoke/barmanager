@@ -16,25 +16,20 @@ public class Customer extends Person
    @Id private String customerId;
 
 //   @DocumentReference
-   private ArrayList<String> orders;
+   private ArrayList<String> ordersIds;
 
-
-   public Customer(String name, int idNumber)
+   public Customer(int idNumber, String firstName, String lastName)
    {
-      super(name, idNumber);
-      orders = new ArrayList<>();
+      super(idNumber, firstName, lastName);
+      this.ordersIds = new ArrayList<>();
    }
+   
 
-  /* public Customer(String name, int idNumber, ArrayList<Order> orders)
-   {
-      super(name, idNumber);
-      this.orders = orders;
-   }*/
 
    @Override
    public String toString()
    {
       return String.format("Customer: customerId: %s, name:%s, idNumber:%s",getCustomerId(),
-              getName(),getIdNumber());
+              getFirstName() +" " + getLastName(),getIdNumber());
    }
 }

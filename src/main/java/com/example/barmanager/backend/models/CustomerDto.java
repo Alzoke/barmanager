@@ -11,14 +11,15 @@ public class CustomerDto
    @JsonIgnore
    private final Customer customer;
 
-    public String getName()
+    public String getFullName()
     {
-        return customer.getName();
+        return
+                customer.getFirstName() + " " + customer.getLastName();
     }
 
     public int getOrderAmount()
     {
-        return customer.getOrders().size();
+        return customer.getOrdersIds().size();
     }
 
 }

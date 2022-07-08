@@ -39,11 +39,12 @@ public class SeedDB implements CommandLineRunner{
         BarDrink barDrink2= barDrinkRepo.findAll().get(2);
         Customer customerTest = customerRepository.findAll().get(1);
 
-        Order order1 = new Order(customerTest, LocalDate.now());
+     /*   Order order1 = new Order(customerTest, LocalDate.now());
+
         order1.addDrinkToOrder(barDrink2);
         order1.addDrinkToOrder(barDrink);
         order1.addDrinkToOrder(barDrink1);
-        customOrderRepository.saveNewOrder(order1);
+        customOrderRepository.saveNewOrder(order1);*/
 
 
 

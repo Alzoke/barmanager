@@ -13,6 +13,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -86,5 +87,13 @@ public class OrderController
     public ResponseEntity<List<Document>> getDrinkPopularity(){
         return ResponseEntity.ok(customOrderRepository.getMostOrderedDrinks());
     }
-
+    @GetMapping("/orders/filterByOrderDate")
+    public ResponseEntity<CollectionModel<EntityModel<Order>>> filterByDateRange
+            (@RequestParam String sDate,@RequestParam String eDate)
+    {
+        LocalDate startDate = LocalDate.parse(sDate);
+        LocalDate endDate = LocalDate.parse(eDate).plusDays(1);
+        return ResponseEntity.ok(orderAssembler
+                .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
+    }
 }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.time.format.DateTimeParseException;
+
 @ControllerAdvice
 public class OrderAdvice
 {
@@ -16,5 +18,13 @@ public class OrderAdvice
     String orderNotFoundHandler(OrderNotFoundException notFoundException)
     {
         return notFoundException.getMessage();
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(DateTimeParseException.class)
+    String parsingDateExceptionHandler(DateTimeParseException exception)
+    {
+        return exception.getMessage();
     }
 }

@@ -1,11 +1,11 @@
 package com.example.barmanager.backend.repositories;
 
 import com.example.barmanager.backend.models.BarDrink;
-import com.example.barmanager.backend.queryresults.CountByCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -20,12 +20,12 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
     public MongoTemplate mongoTemplate;
 
     @Override
-    public List<CountByCategory> getCountGroupByCategory() {
+    public List<Document> getCountGroupByCategory() {
         Aggregation aggregation = newAggregation(
                 group("category").count().as("count"),
                 project("count").and("category"));
 
-        AggregationResults<CountByCategory> results = mongoTemplate.aggregate(aggregation, BarDrink.class, CountByCategory.class);
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, BarDrink.class, Document.class);
 
         return results.getMappedResults();
     }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @Data
 @NoArgsConstructor
-@Document("Customers")
+@Document("customers")
 public class Customer extends Person
 {
    @Id private String customerId;

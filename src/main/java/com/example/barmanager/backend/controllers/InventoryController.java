@@ -3,11 +3,11 @@ package com.example.barmanager.backend.controllers;
 import com.example.barmanager.backend.assemblers.BarDrinkAssembler;
 import com.example.barmanager.backend.exceptions.DrinkNotFoundException;
 import com.example.barmanager.backend.models.BarDrink;
-import com.example.barmanager.backend.queryresults.CountByCategory;
 import com.example.barmanager.backend.repositories.ICustomInventoryRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -102,7 +102,7 @@ public class InventoryController {
 
 
     @GetMapping("/inventory/groupCountByCategory/")
-    public ResponseEntity<List<CountByCategory>> getInventoryCountBy(){
+    public ResponseEntity<List<Document>> getInventoryCountBy(){
         return ResponseEntity.ok(customInventoryRepository.getCountGroupByCategory());
     }
 

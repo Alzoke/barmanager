@@ -5,9 +5,9 @@ import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.models.OrderDto;
-import com.example.barmanager.backend.queryresults.DrinkCount;
 import com.example.barmanager.backend.repositories.ICustomOrderRepository;
 import com.example.barmanager.backend.repositories.IOrderRepository;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +83,7 @@ public class OrderController
     }
 
     @GetMapping("/orders/drinkPopularity")
-    public ResponseEntity<List<DrinkCount>> getDrinkPopularity(){
+    public ResponseEntity<List<Document>> getDrinkPopularity(){
         return ResponseEntity.ok(customOrderRepository.getMostOrderedDrinks());
     }
 

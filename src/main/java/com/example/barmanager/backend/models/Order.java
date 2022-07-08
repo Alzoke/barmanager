@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 @Data
-@Document("Orders")
+@Document("orders")
 public class Order
 {
     @Id private String orderId;

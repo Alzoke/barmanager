@@ -5,6 +5,7 @@ import com.example.barmanager.backend.assemblers.CustomerDtoAssembler;
 import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.CustomerDto;
+import com.example.barmanager.backend.repositories.ICustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -23,12 +24,14 @@ public class CustomerController
     private final CustomerAssembler customerAssembler;
     private final CustomerDtoAssembler customerDtoAssembler;
     private final ICustomerRepository customerRepository;
+    private final ICustomOrderRepository customOrderRepository;
 
-    public CustomerController(CustomerAssembler customerAssembler, CustomerDtoAssembler customerDtoAssembler, ICustomerRepository customerRepository)
+    public CustomerController(CustomerAssembler customerAssembler, CustomerDtoAssembler customerDtoAssembler, ICustomerRepository customerRepository, ICustomOrderRepository customOrderRepository)
     {
         this.customerAssembler = customerAssembler;
         this.customerDtoAssembler = customerDtoAssembler;
         this.customerRepository = customerRepository;
+        this.customOrderRepository = customOrderRepository;
     }
 
     @GetMapping("/customers")

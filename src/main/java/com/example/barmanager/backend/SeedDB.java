@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class SeedDB implements CommandLineRunner{
     private final CocktailDBAPIService drinkService;
@@ -35,9 +37,9 @@ public class SeedDB implements CommandLineRunner{
         BarDrink barDrink = barDrinkRepo.findAll().get(0);
         BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
         BarDrink barDrink2= barDrinkRepo.findAll().get(2);
-        Customer customerAlexi = customerRepository.findAll().get(2);
+        Customer customerTest = customerRepository.findAll().get(1);
 
-        Order order1 = new Order(customerAlexi);
+        Order order1 = new Order(customerTest, LocalDate.now());
         order1.addDrinkToOrder(barDrink2);
         order1.addDrinkToOrder(barDrink);
         order1.addDrinkToOrder(barDrink1);

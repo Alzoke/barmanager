@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 
@@ -18,6 +19,7 @@ public class Order
     private ArrayList<BarDrink> orderedDrinks;
     private double bill;
     private eOrderStatus orderStatus;
+    private LocalDate orderDate;
 
     public double getBill()
     {
@@ -54,11 +56,13 @@ public class Order
         setBill();
 
     }
-    public Order(Customer customer,ArrayList<BarDrink> orderedDrinks)
+
+
+    public Order(Customer customer,LocalDate orderDate)
     {
         this();
         this.customer = customer;
-        this.orderedDrinks = orderedDrinks;
+        this.orderDate = orderDate;
         setBill();
 
     }

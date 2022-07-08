@@ -11,10 +11,12 @@ import org.bson.Document;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -89,10 +91,12 @@ public class OrderController
     }
     @GetMapping("/orders/filterByOrderDate")
     public ResponseEntity<CollectionModel<EntityModel<Order>>> filterByDateRange
-            (@RequestParam String sDate,@RequestParam String eDate)
+            (@RequestParam Optional<String> sDate, @RequestParam Optional<String> eDate)
     {
-        LocalDate startDate = LocalDate.parse(sDate);
-        LocalDate endDate = LocalDate.parse(eDate).plusDays(1);
+        LocalDate startDate = LocalDate.parse(sDate.orElseGet(() -> String.valueOf(LocalDate.now())));
+        LocalDate endDate = LocalDate.parse(eDate.orElseGet(() ->
+                        String.valueOf(LocalDate.now().minusDays(1))))
+                .plusDays(1);
         return ResponseEntity.ok(orderAssembler
                 .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
     }

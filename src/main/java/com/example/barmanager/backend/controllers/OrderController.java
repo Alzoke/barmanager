@@ -7,7 +7,7 @@ import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.models.OrderDto;
 import com.example.barmanager.backend.repositories.ICustomOrderRepository;
 import com.example.barmanager.backend.repositories.IOrderRepository;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.Document;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;

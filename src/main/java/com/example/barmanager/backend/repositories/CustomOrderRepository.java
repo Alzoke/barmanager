@@ -7,13 +7,13 @@ import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import java.util.List;
+import org.bson.Document;
 
 @Component
 public class CustomOrderRepository implements ICustomOrderRepository
@@ -48,14 +48,15 @@ public class CustomOrderRepository implements ICustomOrderRepository
     @Override
     public List<Document> getMostOrderedDrinks() {
         UnwindOperation unwindOperation = unwind("orderedDrinks");
-        GroupOperation groupOperation = group("orderedDrinks._id").count().as("count");
-        ProjectionOperation projectionOperation = project().andExpression("orderedDrinks._id").as("drink id")
+        GroupOperation groupOperation = group("orderedDrinks").count().as("count");
+        ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
                 .andExpression("count").as("count");
 
         Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
         System.out.println(aggregation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
         System.out.println(results.getRawResults());
+        System.out.println(results.getMappedResults());
 
         return results.getMappedResults();
     }

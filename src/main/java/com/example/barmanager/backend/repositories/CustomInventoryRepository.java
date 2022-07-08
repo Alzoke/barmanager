@@ -1,11 +1,11 @@
 package com.example.barmanager.backend.repositories;
 
 import com.example.barmanager.backend.models.BarDrink;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+
 @Component
 public class CustomInventoryRepository implements ICustomInventoryRepository{
     @Autowired
@@ -25,6 +26,7 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
                 group("category").count().as("count"),
                 project("count").and("category"));
 
+        System.out.println(aggregation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, BarDrink.class, Document.class);
 
         return results.getMappedResults();

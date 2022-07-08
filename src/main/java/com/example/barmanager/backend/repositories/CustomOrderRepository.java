@@ -22,20 +22,17 @@ public class CustomOrderRepository implements ICustomOrderRepository
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void saveNewOrder(Order order,Customer customer)
+    public void saveNewOrder(Order order)
     {
         Order savedOrder = mongoTemplate.save(order);
-        Customer savedCustomer = mongoTemplate.save(customer);
-        System.out.println(savedCustomer);
-        System.out.println(savedOrder);
         UpdateResult customerUpdateResult = mongoTemplate.update(Customer.class)
                 .matching(Criteria.where("_id")
-                        .is(customer.getCustomerId()))
-                .apply(new Update().push("orders", order.getOrderId())).first();
+                        .is(order.getCustomer().getCustomerId()))
+                .apply(new Update().push("ordersIds", order.getOrderId())).first();
 
         UpdateResult OrderUpdateResult = mongoTemplate.update(Order.class)
                 .matching(Criteria.where("_id").is(order.getOrderId()))
-                .apply(new Update().set("customer",customer)).first();
+                .apply(new Update().set("customer",order.getCustomer())).first();
 
        /* UpdateResult result = mongoTemplate.update(Order.class)
                 .matching(Criteria.where("id").is(order.getOrderId()))

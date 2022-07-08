@@ -15,7 +15,7 @@ public class Customer extends Person
 {
    @Id private String customerId;
 
-//   @DocumentReference
+   //   @DocumentReference
    private ArrayList<String> ordersIds;
 
    public Customer(int idNumber, String firstName, String lastName)
@@ -23,7 +23,7 @@ public class Customer extends Person
       super(idNumber, firstName, lastName);
       this.ordersIds = new ArrayList<>();
    }
-   
+
 
 
    @Override

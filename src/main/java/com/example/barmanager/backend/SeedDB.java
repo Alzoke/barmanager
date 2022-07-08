@@ -1,6 +1,10 @@
 package com.example.barmanager.backend;
 
 import com.example.barmanager.backend.models.BarDrink;
+import com.example.barmanager.backend.models.Customer;
+import com.example.barmanager.backend.models.Order;
+import com.example.barmanager.backend.repositories.CustomOrderRepository;
+import com.example.barmanager.backend.repositories.ICustomerRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
 import com.example.barmanager.backend.service.CocktailDBAPIService;
 import org.slf4j.Logger;
@@ -13,16 +17,33 @@ public class SeedDB implements CommandLineRunner{
     private final CocktailDBAPIService drinkService;
     private final Logger logger;
     private final InventoryRepo barDrinkRepo;
+    private final ICustomerRepository customerRepository;
+    private final CustomOrderRepository customOrderRepository;
 
-    public SeedDB(CocktailDBAPIService drinkService, InventoryRepo barDrinkRepo) {
+    public SeedDB(CocktailDBAPIService drinkService, InventoryRepo barDrinkRepo, ICustomerRepository customerRepository, CustomOrderRepository orderRepository) {
         this.drinkService = drinkService;
         this.barDrinkRepo = barDrinkRepo;
+        this.customerRepository = customerRepository;
+        this.customOrderRepository = orderRepository;
         this.logger = LoggerFactory.getLogger(SeedDB.class);
     }
 
 
     @Override
     public void run(String... args) throws Exception {
+
+        BarDrink barDrink = barDrinkRepo.findAll().get(0);
+        BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
+        BarDrink barDrink2= barDrinkRepo.findAll().get(2);
+        Customer customerAlexi = customerRepository.findAll().get(2);
+
+        Order order1 = new Order(customerAlexi);
+        order1.addDrinkToOrder(barDrink2);
+        order1.addDrinkToOrder(barDrink);
+        order1.addDrinkToOrder(barDrink1);
+        customOrderRepository.saveNewOrder(order1);
+
+
 
 //        //Seed drink category collection
 //        CompletableFuture<List<DrinkCategories>> categoriesFuture = drinkService.fetchDrinkCategories();

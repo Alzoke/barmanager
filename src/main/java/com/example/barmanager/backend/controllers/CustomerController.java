@@ -7,11 +7,14 @@ import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.CustomerDto;
 import com.example.barmanager.backend.repositories.ICustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,6 +28,8 @@ public class CustomerController
     private final CustomerDtoAssembler customerDtoAssembler;
     private final ICustomerRepository customerRepository;
     private final ICustomOrderRepository customOrderRepository;
+    private final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
 
     public CustomerController(CustomerAssembler customerAssembler, CustomerDtoAssembler customerDtoAssembler, ICustomerRepository customerRepository, ICustomOrderRepository customOrderRepository)
     {
@@ -52,6 +57,9 @@ public class CustomerController
     @PostMapping("/customers")
     ResponseEntity<EntityModel<Customer>> createCustomer(@RequestBody Customer newCustomer)
     {
+        logger.info("received Customer:"  + newCustomer);
+        // init orderId field becasue we get an customer item from front side without orders at first
+        newCustomer.setOrdersIds(new ArrayList<>());
         Customer savedCustomer = customerRepository.save(newCustomer);
         return ResponseEntity.created(linkTo(methodOn(CustomerController.class)
                         .getCustomer(savedCustomer.getCustomerId())).toUri())

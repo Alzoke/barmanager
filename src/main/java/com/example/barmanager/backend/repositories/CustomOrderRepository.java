@@ -49,12 +49,8 @@ public class CustomOrderRepository implements ICustomOrderRepository
         GroupOperation groupOperation = group("orderedDrinks").count().as("count");
         ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
                 .andExpression("count").as("count");
-
         Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
-        System.out.println(aggregation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
-        System.out.println(results.getRawResults());
-        System.out.println(results.getMappedResults());
 
         return results.getMappedResults();
     }

@@ -26,5 +26,4 @@ public interface InventoryRepo extends MongoRepository<BarDrink, String> {
     }
     List<BarDrink> findByPriceBetween(Double lower, Double upper);
     List<BarDrink> findByOrderByPriceAsc();
-
 }

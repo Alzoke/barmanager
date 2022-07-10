@@ -11,7 +11,7 @@ This project is a final project in a server-side development course in spring bo
 A bar management system with over 400 drinks that uses an external API of drinks and cocktails. The system works with a "third party" (API) of drinks that simulates a supplier.
 
 # Structure 
-The project  consist of 2 part: restful web server (API) and client that communicate with this API
+The project  consist of 2 part2: restful web server (API) and client that communicate with this API
 -   Server: Spring Boot Server (Java) 
 -  DB: MongoDB (Atlas)
 -  Client: Vaadin framework for GUI development 

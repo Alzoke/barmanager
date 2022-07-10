@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Value;
 
 @Value
-@JsonPropertyOrder({"name","ordersAmount"})
+@JsonPropertyOrder({"name","idNumber","ordersAmount"})
 public class CustomerDto
 {
    @JsonIgnore
@@ -16,6 +16,8 @@ public class CustomerDto
         return
                 customer.getFirstName() + " " + customer.getLastName();
     }
+
+    public int getIdNumber(){return customer.getIdNumber();}
 
     public int getOrderAmount()
     {

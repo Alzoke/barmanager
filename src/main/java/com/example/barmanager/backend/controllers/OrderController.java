@@ -5,13 +5,14 @@ import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.models.OrderDto;
-import com.example.barmanager.backend.repositories.ICustomOrderRepository;
+import com.example.barmanager.backend.models.eOrderStatus;
+import com.example.barmanager.backend.repositories.CustomOrderRepository;
+import com.example.barmanager.backend.repositories.ICustomerRepository;
 import com.example.barmanager.backend.repositories.IOrderRepository;
 import org.bson.Document;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -28,14 +29,20 @@ public class OrderController
 {
     private final IOrderRepository orderRepository;
     private final OrderAssembler orderAssembler;
-    private final ICustomOrderRepository customOrderRepository;
+    private final CustomOrderRepository customOrderRepository;
+    private final ICustomerRepository customerRepository;
     private final OrderDtoAssembler orderDtoAssembler;
 
-    public OrderController(IOrderRepository orderRepository, OrderAssembler orderAssembler, ICustomOrderRepository customOrderRepository, OrderDtoAssembler orderDtoAssembler)
+    public OrderController(IOrderRepository orderRepository,
+                           OrderAssembler orderAssembler,
+                           CustomOrderRepository customOrderRepository,
+                           ICustomerRepository customerRepository,
+                           OrderDtoAssembler orderDtoAssembler)
     {
         this.orderRepository = orderRepository;
         this.orderAssembler = orderAssembler;
         this.customOrderRepository = customOrderRepository;
+        this.customerRepository = customerRepository;
         this.orderDtoAssembler = orderDtoAssembler;
     }
 
@@ -54,10 +61,15 @@ public class OrderController
                 .toCollectionModel(orderRepository.findAll()));
     }
 
+
+
     @PostMapping("/orders")
     ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder)
     {
-        Order savedOrder = orderRepository.save(newOrder);
+//        Order savedOrder = orderRepository.save(newOrder);
+        newOrder.setCustomer(customerRepository.findByIdNumber(newOrder.getCustomer().getIdNumber()));
+        Order savedOrder = customOrderRepository.saveNewOrder(newOrder);
+        System.out.println(savedOrder);
 
         return ResponseEntity.created(linkTo(methodOn(OrderController.class)
                 .getOrder(savedOrder.getOrderId())).toUri())
@@ -70,6 +82,19 @@ public class OrderController
         return ResponseEntity.ok(
                 orderDtoAssembler.toCollectionModel(
                         StreamSupport.stream(orderRepository.findAll().spliterator(),
+                                        false)
+                                .map(OrderDto::new)
+                                .collect(Collectors.toList())));
+    }
+
+    @GetMapping("/orders/openOrders")
+    public ResponseEntity<CollectionModel<EntityModel<OrderDto>>> getOpenOrders()
+    {
+        return ResponseEntity.ok(
+                orderDtoAssembler.toCollectionModel(
+                        StreamSupport.stream(orderRepository
+                                                .findByOrderStatus(eOrderStatus.Open)
+                                                .spliterator(),
                                         false)
                                 .map(OrderDto::new)
                                 .collect(Collectors.toList())));

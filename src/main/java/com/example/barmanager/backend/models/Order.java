@@ -20,6 +20,7 @@ public class Order
     private double bill;
     private eOrderStatus orderStatus;
     private LocalDate orderDate;
+    private int seatNumber;
 
     public double getBill()
     {
@@ -44,6 +45,7 @@ public class Order
         this.orderedDrinks = new ArrayList<>();
 
     }
+
     public void addDrinkToOrder(BarDrink barDrink)
     {
         this.orderedDrinks.add(barDrink);

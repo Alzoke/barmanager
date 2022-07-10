@@ -1,16 +1,13 @@
 package com.example.barmanager.backend.repositories;
 
-import com.example.barmanager.backend.models.BarDrink;
-import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
 import org.bson.Document;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 
 public interface ICustomOrderRepository
 {
-    void saveNewOrder(Order order);
+    Order saveNewOrder(Order order);
     List<Document> getMostOrderedDrinks();
 }

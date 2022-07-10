@@ -15,6 +15,12 @@ public class OrderDto
     {
         return String.format("%s's order",order.getCustomer().getFirstName());
     }
+    public double getOrderBill()
+    {
+        return order.getBill();
+    }
+    public String getOrderId(){return order.getOrderId();}
+    public int getSeatNumber(){return order.getSeatNumber();}
 
     public int numberOfOrderedItems()
     {

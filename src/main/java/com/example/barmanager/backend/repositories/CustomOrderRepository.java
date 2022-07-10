@@ -1,6 +1,5 @@
 package com.example.barmanager.backend.repositories;
 
-import com.example.barmanager.backend.models.BarDrink;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
 import com.mongodb.client.result.UpdateResult;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -22,8 +20,9 @@ public class CustomOrderRepository implements ICustomOrderRepository
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void saveNewOrder(Order order)
+    public Order saveNewOrder(Order order)
     {
+
         Order savedOrder = mongoTemplate.save(order);
         UpdateResult customerUpdateResult = mongoTemplate.update(Customer.class)
                 .matching(Criteria.where("_id")
@@ -40,6 +39,8 @@ public class CustomOrderRepository implements ICustomOrderRepository
         System.out.println(result)*/;
         System.out.println(customerUpdateResult);
         System.out.println(OrderUpdateResult);
+
+        return savedOrder;
     }
 
     @Override

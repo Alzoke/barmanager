@@ -2,7 +2,6 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.OrderAssembler;
 import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
-import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
@@ -78,12 +77,9 @@ public class OrderController
     @PostMapping("/orders")
     ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder)
     {
-//        Order savedOrder = orderRepository.save(newOrder);
-        Customer optionalCustomer = customerRepository.findByIdNumber
-                (newOrder.getCustomer().getIdNumber())
-                .orElseThrow(() -> new CustomerNotFoundException(newOrder.getCustomer().getCustomerId()));
+        Customer customer = customerService.findCustomerByIdNumber(newOrder.getCustomer().getIdNumber());
 
-        newOrder.setCustomer(optionalCustomer);
+        newOrder.setCustomer(customer);
         Order savedOrder = customOrderRepository.saveNewOrder(newOrder);
         System.out.println(savedOrder);
 
@@ -142,14 +138,29 @@ public class OrderController
                 .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
     }
 
+    @GetMapping("/orders/closeBySeat")
+    public ResponseEntity<EntityModel<OrderDto>> findByStatusAndBySeat(
+            @RequestParam int seatNumber, eOrderStatus orderStatus )
+    {
+
+        ResponseEntity<EntityModel<OrderDto>> entity =
+//                customOrderRepository.findCloseBySeat(seatNumber)
+                orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
+                .map(OrderDto::new).map(orderDtoAssembler::toModel)
+                .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        logger.info(String.valueOf(entity.getBody().getContent().getOrderedItems().size()));
+        return entity;
+
+
+    }
 
     @PutMapping("/orders/{id}")
-    ResponseEntity<?> setOrderStatusToClose(@RequestBody Order orderToUpdate, @PathVariable String id)
+    public ResponseEntity<?> setOrderStatusToClose(@PathVariable String id)
     {
-        logger.info("received order : " + orderToUpdate);
-        Customer customer = customerService.findCustomerByIdNumber
-                (orderToUpdate.getCustomer().getIdNumber());
-        Order updatedOrder = orderRepository.findById(id)
+
+     /*   Customer customer = customerService.findCustomerByIdNumber
+                (orderToUpdate.getCustomer().getIdNumber());*/
+        /*Order updatedOrder = orderRepository.findById(id)
                 .map(order -> {
                     order.setOrderId(orderToUpdate.getOrderId());
                     order.setOrderDate(orderToUpdate.getOrderDate());
@@ -159,10 +170,12 @@ public class OrderController
                     order.setOrderedDrinks(orderToUpdate.getOrderedDrinks());
                     order.setCustomer(customer);
                     return orderRepository.save(order);
-                }).orElseThrow(() -> new OrderNotFoundException(id));
+                }).orElseThrow(() -> new OrderNotFoundException(id));*/
+        Order orderToUpdate = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        Order order = customOrderRepository.closeOrder(orderToUpdate);
 
         return ResponseEntity.ok(orderAssembler
-                .toModel(updatedOrder));
+                .toModel(order));
 
     }
 }

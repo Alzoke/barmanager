@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Value;
 
+import java.util.ArrayList;
+
 @Value
 @JsonPropertyOrder({"OrderName","itemsCounter","OrderStatus"})
 public class OrderDto
 {
     @JsonIgnore
     private final Order order;
+
+
 
     public String getOrderName()
     {
@@ -21,6 +25,7 @@ public class OrderDto
     }
     public String getOrderId(){return order.getOrderId();}
     public int getSeatNumber(){return order.getSeatNumber();}
+    public ArrayList<BarDrink> getOrderedItems(){return order.getOrderedDrinks();}
 
     public int numberOfOrderedItems()
     {

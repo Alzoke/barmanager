@@ -10,6 +10,8 @@ import com.example.barmanager.backend.repositories.CustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
 import com.example.barmanager.backend.repositories.IOrderRepository;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class OrderController
     private final CustomOrderRepository customOrderRepository;
     private final ICustomerRepository customerRepository;
     private final OrderDtoAssembler orderDtoAssembler;
+    private final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     public OrderController(IOrderRepository orderRepository,
                            OrderAssembler orderAssembler,
@@ -49,9 +52,12 @@ public class OrderController
     @GetMapping("/orders/{id}")
     public ResponseEntity<EntityModel<Order>> getOrder(@PathVariable String id)
     {
+        Optional<Order> byId = orderRepository.findById(id);
+        logger.info(String.valueOf(byId.get().getOrderedDrinks().size()));
         return orderRepository.findById(id)
                 .map(order -> orderAssembler.toModel(order)).map(ResponseEntity::ok)
                 .orElseThrow(() -> new OrderNotFoundException(id));
+
     }
 
     @GetMapping("/orders")
@@ -124,5 +130,27 @@ public class OrderController
                 .plusDays(1);
         return ResponseEntity.ok(orderAssembler
                 .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
+    }
+
+    @PutMapping("/orders/{id}")
+    ResponseEntity<?> updateOrder(@RequestBody Order orderToUpdate, @PathVariable String id)
+    {
+        orderToUpdate.setOrderStatus(eOrderStatus.Close);
+        Order savedOrder = orderRepository.save(orderToUpdate);
+        return ResponseEntity.created(linkTo(methodOn(OrderController.class)
+                        .getOrder(savedOrder.getOrderId())).toUri())
+                .body(orderAssembler.toModel(savedOrder));
+
+        /*Order updatedOrder = orderRepository.findById(id)
+                .map(order -> {
+                    order.setOrderId(orderToUpdate.getOrderId());
+                    order.setOrderDate(orderToUpdate.getOrderDate());
+                    order.setOrderStatus(eOrderStatus.Close);
+                    order.setSeatNumber(orderToUpdate.getSeatNumber());
+                    order.setBill(orderToUpdate.getBill());
+                    order.setOrderedDrinks(orderToUpdate.getOrderedDrinks());
+
+
+                })*/
     }
 }

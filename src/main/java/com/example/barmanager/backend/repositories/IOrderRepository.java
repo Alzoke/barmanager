@@ -9,4 +9,5 @@ import java.util.List;
 public interface IOrderRepository extends MongoRepository<Order, String> {
     List<Order> findByOrderDateBetween(LocalDate startDate,LocalDate endDate);
     List<Order> findByOrderStatus(eOrderStatus orderStatus);
+
 }

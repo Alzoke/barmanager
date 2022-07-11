@@ -2,16 +2,20 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.OrderAssembler;
 import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
+import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
+import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.models.OrderDto;
 import com.example.barmanager.backend.models.eOrderStatus;
 import com.example.barmanager.backend.repositories.CustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
 import com.example.barmanager.backend.repositories.IOrderRepository;
+import com.example.barmanager.backend.service.CustomerService;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +39,8 @@ public class OrderController
     private final ICustomerRepository customerRepository;
     private final OrderDtoAssembler orderDtoAssembler;
     private final Logger logger = LoggerFactory.getLogger(OrderController.class);
+
+    @Autowired  private CustomerService customerService;
 
     public OrderController(IOrderRepository orderRepository,
                            OrderAssembler orderAssembler,
@@ -73,7 +79,11 @@ public class OrderController
     ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder)
     {
 //        Order savedOrder = orderRepository.save(newOrder);
-        newOrder.setCustomer(customerRepository.findByIdNumber(newOrder.getCustomer().getIdNumber()));
+        Customer optionalCustomer = customerRepository.findByIdNumber
+                (newOrder.getCustomer().getIdNumber())
+                .orElseThrow(() -> new CustomerNotFoundException(newOrder.getCustomer().getCustomerId()));
+
+        newOrder.setCustomer(optionalCustomer);
         Order savedOrder = customOrderRepository.saveNewOrder(newOrder);
         System.out.println(savedOrder);
 
@@ -132,16 +142,14 @@ public class OrderController
                 .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
     }
 
-    @PutMapping("/orders/{id}")
-    ResponseEntity<?> updateOrder(@RequestBody Order orderToUpdate, @PathVariable String id)
-    {
-        orderToUpdate.setOrderStatus(eOrderStatus.Close);
-        Order savedOrder = orderRepository.save(orderToUpdate);
-        return ResponseEntity.created(linkTo(methodOn(OrderController.class)
-                        .getOrder(savedOrder.getOrderId())).toUri())
-                .body(orderAssembler.toModel(savedOrder));
 
-        /*Order updatedOrder = orderRepository.findById(id)
+    @PutMapping("/orders/{id}")
+    ResponseEntity<?> setOrderStatusToClose(@RequestBody Order orderToUpdate, @PathVariable String id)
+    {
+        logger.info("received order : " + orderToUpdate);
+        Customer customer = customerService.findCustomerByIdNumber
+                (orderToUpdate.getCustomer().getIdNumber());
+        Order updatedOrder = orderRepository.findById(id)
                 .map(order -> {
                     order.setOrderId(orderToUpdate.getOrderId());
                     order.setOrderDate(orderToUpdate.getOrderDate());
@@ -149,8 +157,12 @@ public class OrderController
                     order.setSeatNumber(orderToUpdate.getSeatNumber());
                     order.setBill(orderToUpdate.getBill());
                     order.setOrderedDrinks(orderToUpdate.getOrderedDrinks());
+                    order.setCustomer(customer);
+                    return orderRepository.save(order);
+                }).orElseThrow(() -> new OrderNotFoundException(id));
 
+        return ResponseEntity.ok(orderAssembler
+                .toModel(updatedOrder));
 
-                })*/
     }
 }

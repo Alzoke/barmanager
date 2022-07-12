@@ -1,5 +1,6 @@
 package com.example.barmanager.backend.repositories;
 
+import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.*;
 import com.example.barmanager.backend.service.CustomerService;
@@ -62,10 +63,11 @@ public class CustomOrderRepository implements ICustomOrderRepository
     }
 
     @Override
-    public void deleteOrder(Order order)
+    public boolean deleteOrder(Order order)
     {
-        logger.info("removing: " + mongoTemplate.remove(order));
-        Customer customer = customerRepository.findById(order.getCustomer().getCustomerId()).get();
+        Customer customer = customerRepository.findById(order.getCustomer().getCustomerId())
+                .orElseThrow(() -> new CustomerNotFoundException(order.getCustomer().getCustomerId()));
+
         ArrayList<String> ordersIds = customer.getOrdersIds();
         List<String> orders = ordersIds.stream()
                 .filter(orderId -> !orderId.equals(order.getOrderId()))
@@ -75,6 +77,10 @@ public class CustomOrderRepository implements ICustomOrderRepository
                 .matching(Criteria.where("_id").is(order.getCustomer().getCustomerId()))
                 .apply(new Update().set("ordersIds", orders)).first();
         logger.info(first.toString());
+        logger.info("removing: " + mongoTemplate.remove(order));
+        // return true if deletion succeeded
+        return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
+
     }
 
     public Order closeOrder(Order order)
@@ -82,11 +88,6 @@ public class CustomOrderRepository implements ICustomOrderRepository
         Order order1 = orderRepository.findById(order.getOrderId()).get();
         Customer customer = customerService.findCustomerByIdNumber(order1.getCustomer().getIdNumber());
         Update update = new Update();
-//        logger.info(String.valueOf(order.getOrderedDrinks().size()));
-       /* for ( BarDrink orderedDrink : order.getOrderedDrinks() )
-        {
-            update.push("orderedDrinks",)
-        }*/
         update.set("orderedDrinks",order1.getOrderedDrinks());
         update.set("bill",order1.getBill());
         update.set("orderDate",order1.getOrderDate());
@@ -110,7 +111,12 @@ public class CustomOrderRepository implements ICustomOrderRepository
         query.addCriteria(Criteria.where("seatNumber").is(seatNumber));
         query.addCriteria(Criteria.where("orderStatus").is(eOrderStatus.Open));
         List<Order> orders = mongoTemplate.find(query, Order.class);
-        logger.info(String.valueOf(orders.get(0).getOrderedDrinks().size()));
+//        logger.info(String.valueOf(orders.get(0).getOrderedDrinks().size()));
+        if ( orders.isEmpty() )
+        {
+            return Optional.of(new Order());
+        }
+
         return Optional.of(orders.get(0));
     }
 

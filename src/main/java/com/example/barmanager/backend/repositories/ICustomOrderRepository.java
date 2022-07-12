@@ -10,5 +10,5 @@ public interface ICustomOrderRepository
 {
     Order saveNewOrder(Order order);
     List<Document> getMostOrderedDrinks();
-    void deleteOrder(Order order);
+    boolean deleteOrder(Order order);
 }

@@ -1,18 +1,16 @@
 package com.example.barmanager.backend;
 
-import com.example.barmanager.backend.models.BarDrink;
-import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.repositories.CustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
+import com.example.barmanager.backend.repositories.IOrderRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
 import com.example.barmanager.backend.service.CocktailDBAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 public class SeedDB implements CommandLineRunner{
@@ -21,6 +19,9 @@ public class SeedDB implements CommandLineRunner{
     private final InventoryRepo barDrinkRepo;
     private final ICustomerRepository customerRepository;
     private final CustomOrderRepository customOrderRepository;
+
+    @Autowired
+    private  IOrderRepository orderRepository;
 
     public SeedDB(CocktailDBAPIService drinkService, InventoryRepo barDrinkRepo, ICustomerRepository customerRepository, CustomOrderRepository orderRepository) {
         this.drinkService = drinkService;
@@ -33,11 +34,16 @@ public class SeedDB implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
+//        customOrderRepository.findCloseBySeat(3);
+//        Order byId = orderRepository.findById("62cc388e5063b30494a66d63").get();
+//        customOrderRepository.deleteOrder(byId);
 
-        BarDrink barDrink = barDrinkRepo.findAll().get(0);
-        BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
-        BarDrink barDrink2= barDrinkRepo.findAll().get(2);
-        Customer customerTest = customerRepository.findAll().get(1);
+
+//
+//        BarDrink barDrink = barDrinkRepo.findAll().get(0);
+//        BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
+//        BarDrink barDrink2= barDrinkRepo.findAll().get(2);
+//        Customer customerTest = customerRepository.findAll().get(1);
 
      /*   Order order1 = new Order(customerTest, LocalDate.now());
 

@@ -7,6 +7,7 @@ import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.CustomerDto;
 import com.example.barmanager.backend.repositories.ICustomOrderRepository;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
+import com.example.barmanager.backend.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
@@ -28,15 +29,21 @@ public class CustomerController
     private final CustomerDtoAssembler customerDtoAssembler;
     private final ICustomerRepository customerRepository;
     private final ICustomOrderRepository customOrderRepository;
+    private final CustomerService customerService;
     private final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
 
-    public CustomerController(CustomerAssembler customerAssembler, CustomerDtoAssembler customerDtoAssembler, ICustomerRepository customerRepository, ICustomOrderRepository customOrderRepository)
+    public CustomerController(CustomerAssembler customerAssembler,
+                              CustomerDtoAssembler customerDtoAssembler,
+                              ICustomerRepository customerRepository,
+                              ICustomOrderRepository customOrderRepository,
+                              CustomerService customerService)
     {
         this.customerAssembler = customerAssembler;
         this.customerDtoAssembler = customerDtoAssembler;
         this.customerRepository = customerRepository;
         this.customOrderRepository = customOrderRepository;
+        this.customerService = customerService;
     }
 
     @GetMapping("/customers")
@@ -87,8 +94,30 @@ public class CustomerController
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
-    //TODO: @Delete
-    // TODO: @Put
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable String id)
+    {
+        Customer deletedCustomer = customerService.deleteCustomer(id);
+        EntityModel<Customer> deletedCustomerEntityModel = customerAssembler.toModel(deletedCustomer);
 
+        return ResponseEntity.ok(deletedCustomerEntityModel);
+    }
+
+    @PutMapping ("/customers/{id}")
+    ResponseEntity<EntityModel<Customer>> updatedCustomer(@RequestBody Customer newCustomer,
+                                                          @PathVariable String id)
+    {
+        return  customerRepository.findById(id)
+                .map(customer -> {
+                    customer.setIdNumber(newCustomer.getIdNumber());
+                    customer.setOrdersIds(newCustomer.getOrdersIds());
+                    customer.setFirstName(newCustomer.getFirstName());
+                    customer.setLastName(newCustomer.getLastName());
+                    return customerRepository.save(customer);
+                })
+                .map(customerAssembler::toModel)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+    }
 
 }

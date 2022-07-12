@@ -17,11 +17,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.annotation.Retention;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -73,7 +77,6 @@ public class OrderController
     }
 
 
-
     @PostMapping("/orders")
     ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder)
     {
@@ -102,10 +105,12 @@ public class OrderController
     @GetMapping("/orders/openOrders")
     public ResponseEntity<CollectionModel<EntityModel<OrderDto>>> getOpenOrders()
     {
+        List<Order> orders = orderRepository
+                .findByOrderStatus(eOrderStatus.Open);
+        logger.info(orders.toString());
         return ResponseEntity.ok(
                 orderDtoAssembler.toCollectionModel(
-                        StreamSupport.stream(orderRepository
-                                                .findByOrderStatus(eOrderStatus.Open)
+                        StreamSupport.stream(orders
                                                 .spliterator(),
                                         false)
                                 .map(OrderDto::new)
@@ -142,13 +147,12 @@ public class OrderController
     public ResponseEntity<EntityModel<OrderDto>> findByStatusAndBySeat(
             @RequestParam int seatNumber, eOrderStatus orderStatus )
     {
-
         ResponseEntity<EntityModel<OrderDto>> entity =
-//                customOrderRepository.findCloseBySeat(seatNumber)
-                orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
+                customOrderRepository.findCloseBySeat(seatNumber)
+//                orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
                 .map(OrderDto::new).map(orderDtoAssembler::toModel)
                 .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-        logger.info(String.valueOf(entity.getBody().getContent().getOrderedItems().size()));
+//        logger.info(String.valueOf(Objects.requireNonNull(entity.getBody()).getContent().getOrderedItems().size()));
         return entity;
 
 
@@ -157,25 +161,27 @@ public class OrderController
     @PutMapping("/orders/{id}")
     public ResponseEntity<?> setOrderStatusToClose(@PathVariable String id)
     {
-
-     /*   Customer customer = customerService.findCustomerByIdNumber
-                (orderToUpdate.getCustomer().getIdNumber());*/
-        /*Order updatedOrder = orderRepository.findById(id)
-                .map(order -> {
-                    order.setOrderId(orderToUpdate.getOrderId());
-                    order.setOrderDate(orderToUpdate.getOrderDate());
-                    order.setOrderStatus(eOrderStatus.Close);
-                    order.setSeatNumber(orderToUpdate.getSeatNumber());
-                    order.setBill(orderToUpdate.getBill());
-                    order.setOrderedDrinks(orderToUpdate.getOrderedDrinks());
-                    order.setCustomer(customer);
-                    return orderRepository.save(order);
-                }).orElseThrow(() -> new OrderNotFoundException(id));*/
         Order orderToUpdate = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         Order order = customOrderRepository.closeOrder(orderToUpdate);
 
         return ResponseEntity.ok(orderAssembler
                 .toModel(order));
+
+    }
+
+    @DeleteMapping("/orders/{id}")
+    public ResponseEntity<EntityModel<Order>> deleteOrder(@PathVariable String id){
+
+        Order orderToDelete = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        boolean isSucceeded = customOrderRepository.deleteOrder(orderToDelete);
+        EntityModel<Order> orderEntityModel = orderAssembler.toModel(orderToDelete);
+
+        if ( isSucceeded )
+            return ResponseEntity.ok(orderEntityModel);
+        else return ResponseEntity.badRequest().body(orderEntityModel);
+
+
 
     }
 }

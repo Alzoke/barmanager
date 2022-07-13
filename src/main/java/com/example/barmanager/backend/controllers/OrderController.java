@@ -126,6 +126,12 @@ public class OrderController
     public ResponseEntity<List<Document>> getDrinkPopularity(){
         return ResponseEntity.ok(customOrderRepository.getMostOrderedDrinks());
     }
+
+    @GetMapping("/orders/profits")
+    public ResponseEntity<List<Document>> getProfits(@RequestParam int year){
+        return ResponseEntity.ok(customOrderRepository.getProfitsByYear(year));
+    }
+
     @GetMapping("/orders/filterByOrderDate")
     public ResponseEntity<CollectionModel<EntityModel<Order>>> filterByDateRange
             (@RequestParam Optional<String> sDate, @RequestParam Optional<String> eDate)
@@ -143,10 +149,11 @@ public class OrderController
             @RequestParam int seatNumber, eOrderStatus orderStatus )
     {
 
+        System.out.println(customOrderRepository.findCloseBySeat(seatNumber).map(OrderDto::new));
         ResponseEntity<EntityModel<OrderDto>> entity =
 //                customOrderRepository.findCloseBySeat(seatNumber)
-                orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
-                .map(OrderDto::new).map(orderDtoAssembler::toModel)
+                //orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
+        customOrderRepository.findCloseBySeat(seatNumber).map(OrderDto::new).map(orderDtoAssembler::toModel)
                 .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         logger.info(String.valueOf(entity.getBody().getContent().getOrderedItems().size()));
         return entity;

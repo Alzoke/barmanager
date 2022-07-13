@@ -119,8 +119,13 @@ public class InventoryController {
 
 
     @GetMapping("/inventory/groupCountByCategory/")
-    public ResponseEntity<List<Document>> getInventoryCountBy(){
+    public ResponseEntity<List<Document>> getInventoryCountByCategory(){
         return ResponseEntity.ok(customInventoryRepository.getCountGroupByCategory());
+    }
+
+    @GetMapping("/inventory/getIngredientsCount/")
+    public ResponseEntity<List<Document>> getInventoryIngredientCount(){
+        return ResponseEntity.ok(customInventoryRepository.getIngredientCount());
     }
 
     @GetMapping("/inventory/filter")

@@ -12,5 +12,5 @@ public interface ICustomInventoryRepository {
     Iterable<? extends BarDrink> getFilteredByMultipleParams(Optional<String> category, Optional<String> ingredient,
                                                              Optional<String> alcoholFilter, Optional<Double> minPrice,
                                                              Optional<Double> maxPrice);
-
+    List<Document> getIngredientCount();
 }

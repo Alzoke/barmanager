@@ -109,24 +109,44 @@ public class CustomOrderRepository implements ICustomOrderRepository
         Query query = new Query();
         query.addCriteria(Criteria.where("seatNumber").is(seatNumber));
         query.addCriteria(Criteria.where("orderStatus").is(eOrderStatus.Open));
-        List<Order> orders = mongoTemplate.find(query, Order.class);
-        logger.info(String.valueOf(orders.get(0).getOrderedDrinks().size()));
-        return Optional.of(orders.get(0));
+        Order orders = mongoTemplate.findOne(query, Order.class);
+        MatchOperation matchOperation = new MatchOperation(Criteria.where("seatNumber").is(seatNumber)
+                .andOperator(Criteria.where("orderStatus").is(eOrderStatus.Open)));
+        Aggregation aggregation = newAggregation(matchOperation);
+        AggregationResults<Document> document = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
+        logger.info(String.valueOf(document.getRawResults()));
+        logger.info(String.valueOf(orders.getOrderedDrinks()));
+        return Optional.of(orders);
     }
 
     @Override
     public List<Document> getMostOrderedDrinks() {
         UnwindOperation unwindOperation = unwind("orderedDrinks");
-        GroupOperation groupOperation = group("orderedDrinks").count().as("count");
+        GroupOperation groupOperation = group("orderedDrinks").count().as("result");
         ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
-                .andExpression("count").as("count");
+                .andExpression("result").as("result");
         Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
 
         return results.getMappedResults();
     }
 
+    @Override
+    public List<Document> getProfitsByYear(int year) {
+        ProjectionOperation projectDateAsMonthAndYear =
+                project().and(DateOperators.Month.monthOf("orderDate")).as("month")
+                        .and(DateOperators.Year.yearOf("orderDate")).as("year")
+                        .and("bill").as("bill");
+        MatchOperation matchOperation = match(Criteria.where("year").is(year));
+        GroupOperation groupOperation = group("month").sum("bill").as("result");
+        ProjectionOperation projectionOperation = project().andExpression("month").as("month")
+                .andExpression("result").as("result");
+        Aggregation aggregation = newAggregation( projectDateAsMonthAndYear,matchOperation,groupOperation, projectionOperation);
 
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
+
+        return results.getMappedResults();
+    }
 
 
 }

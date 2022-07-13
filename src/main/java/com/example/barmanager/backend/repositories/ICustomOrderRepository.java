@@ -10,5 +10,6 @@ public interface ICustomOrderRepository
 {
     Order saveNewOrder(Order order);
     List<Document> getMostOrderedDrinks();
+    List<Document> getProfitsByYear(int year);
     void deleteOrder(Order order);
 }

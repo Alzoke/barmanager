@@ -9,6 +9,7 @@ import java.util.List;
 public interface ICustomOrderRepository
 {
     Order saveNewOrder(Order order);
-    List<Document> getMostOrderedDrinks();
+    List<Document> getTenMostOrderedDrinks();
+    List<Document> getProfitsByYear(int year);
     boolean deleteOrder(Order order);
 }

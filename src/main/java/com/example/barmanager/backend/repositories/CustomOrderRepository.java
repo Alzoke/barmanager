@@ -8,6 +8,7 @@ import com.mongodb.client.result.UpdateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -123,17 +124,38 @@ public class CustomOrderRepository implements ICustomOrderRepository
     }
 
     @Override
-    public List<Document> getMostOrderedDrinks() {
+    public List<Document> getTenMostOrderedDrinks() {
         UnwindOperation unwindOperation = unwind("orderedDrinks");
-        GroupOperation groupOperation = group("orderedDrinks").count().as("count");
+        GroupOperation groupOperation = group("orderedDrinks").count().as("result");
+        SortOperation sortOperation = sort(Sort.by(Sort.Direction.DESC, "result"));
         ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
-                .andExpression("count").as("count");
-        Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
+                .andExpression("result").as("result");
+        LimitOperation limitOperation = limit(10);
+        Aggregation aggregation = newAggregation(unwindOperation, groupOperation, sortOperation, projectionOperation, limitOperation);
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
+        for (Document document :results.getMappedResults()) {
+            document.put("_id", document.get("_id").toString());
+        }
+        return results.getMappedResults();
+    }
+
+    @Override
+    public List<Document> getProfitsByYear(int year) {
+        ProjectionOperation projectDateAsMonthAndYear =
+                project().and(DateOperators.Month.monthOf("orderDate")).as("month")
+                        .and(DateOperators.Year.yearOf("orderDate")).as("year")
+                        .and("bill").as("bill");
+        MatchOperation matchOperation = match(Criteria.where("year").is(year));
+        GroupOperation groupOperation = group("month").sum("bill").as("result");
+        SortOperation sortOperation = sort(Sort.by(Sort.Direction.ASC, "_id"));
+        ProjectionOperation projectionOperation = project().andExpression("month").as("month")
+                .andExpression("result").as("result");
+        Aggregation aggregation = newAggregation( projectDateAsMonthAndYear,matchOperation,groupOperation, sortOperation,projectionOperation);
+        System.out.println(aggregation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
 
         return results.getMappedResults();
     }
-
 
 
 

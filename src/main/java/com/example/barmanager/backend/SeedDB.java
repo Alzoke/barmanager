@@ -1,16 +1,18 @@
 package com.example.barmanager.backend;
 
-import com.example.barmanager.backend.models.*;
-import com.example.barmanager.backend.repositories.*;
+import com.example.barmanager.backend.models.BarDrink;
+import com.example.barmanager.backend.models.Customer;
+import com.example.barmanager.backend.models.Order;
+import com.example.barmanager.backend.repositories.CustomOrderRepository;
+import com.example.barmanager.backend.repositories.ICustomerRepository;
+import com.example.barmanager.backend.repositories.InventoryRepo;
 import com.example.barmanager.backend.service.CocktailDBAPIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
 public class SeedDB implements CommandLineRunner{
@@ -19,15 +21,6 @@ public class SeedDB implements CommandLineRunner{
     private final InventoryRepo barDrinkRepo;
     private final ICustomerRepository customerRepository;
     private final CustomOrderRepository customOrderRepository;
-
-    @Autowired
-    private  IOrderRepository orderRepository;
-    @Autowired
-    private IBrunchRepository brunchRepository;
-    @Autowired
-    private IEmployeeRepository employeeRepository;
-    @Autowired
-    private CustomBrunchRepository customBrunchRepository;
 
     public SeedDB(CocktailDBAPIService drinkService, InventoryRepo barDrinkRepo, ICustomerRepository customerRepository, CustomOrderRepository orderRepository) {
         this.drinkService = drinkService;
@@ -41,47 +34,10 @@ public class SeedDB implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
 
-        List<BarDrink> drinks = barDrinkRepo.findAll();
-        Customer customer = customerRepository.findAll().get(0);
-        Order order = new Order(customer, LocalDate.of(2021,13,07));
-        order.addDrinkToOrder(drinks.get(0));
-        order.addDrinkToOrder(drinks.get(4));
-        order.addDrinkToOrder(drinks.get(3));
-        customOrderRepository.saveNewOrder(order);
-       /* Employee employee = new Employee(987456321,"Test","User",46.0);
-        logger.info(employeeRepository.save(employee).toString());*/
-
-       /* List<BarDrink> drinks = barDrinkRepo.findAll();
-        List<Order> orders = orderRepository.findAll();
-        Brunch brunch = new Brunch("Haifa");
-        brunch.setOrders(orders.subList(0,3));
-        brunch.setBarDrinks(drinks.subList(0,5));
-        brunchRepository.save(brunch);*/
-
-        /*List<Employee> employees = employeeRepository.findAll();
-        List<Brunch> brunches = brunchRepository.findAll();
-        customBrunchRepository.addEmployee(brunches.get(1),employees.get(1));*/
-
-
- /*       Employee employee = new Employee(987456321,"John","Levi",31.5);
-        Employee employee1 = new Employee(999666333,"Donald","Trump",34.4);
-        List<Brunch> brunches = brunchRepository.findAll();
-        employee.addToBrunch(brunches.get(0));
-        employee1.addToBrunch(brunches.get(1));
-        employeeRepository.save(employee);
-        employeeRepository.save(employee1);*/
-
-
-//        customOrderRepository.findCloseBySeat(3);
-//        Order byId = orderRepository.findById("62cc388e5063b30494a66d63").get();
-//        customOrderRepository.deleteOrder(byId);
-
-
-//
-//        BarDrink barDrink = barDrinkRepo.findAll().get(0);
-//        BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
-//        BarDrink barDrink2= barDrinkRepo.findAll().get(2);
-//        Customer customerTest = customerRepository.findAll().get(1);
+        BarDrink barDrink = barDrinkRepo.findAll().get(0);
+        BarDrink barDrink1 = barDrinkRepo.findAll().get(1);
+        BarDrink barDrink2= barDrinkRepo.findAll().get(2);
+        Customer customerTest = customerRepository.findAll().get(1);
 
      /*   Order order1 = new Order(customerTest, LocalDate.now());
 

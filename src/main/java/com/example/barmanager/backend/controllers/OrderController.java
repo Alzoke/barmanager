@@ -17,15 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.annotation.Retention;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -129,8 +125,14 @@ public class OrderController
 
     @GetMapping("/orders/drinkPopularity")
     public ResponseEntity<List<Document>> getDrinkPopularity(){
-        return ResponseEntity.ok(customOrderRepository.getMostOrderedDrinks());
+        return ResponseEntity.ok(customOrderRepository.getTenMostOrderedDrinks());
     }
+
+    @GetMapping("/orders/profits")
+    public ResponseEntity<List<Document>> getProfits(@RequestParam int year){
+        return ResponseEntity.ok(customOrderRepository.getProfitsByYear(year));
+    }
+
     @GetMapping("/orders/filterByOrderDate")
     public ResponseEntity<CollectionModel<EntityModel<Order>>> filterByDateRange
             (@RequestParam Optional<String> sDate, @RequestParam Optional<String> eDate)

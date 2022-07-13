@@ -55,7 +55,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
        /* UpdateResult result = mongoTemplate.update(Order.class)
                 .matching(Criteria.where("id").is(order.getOrderId()))
                 .apply(new Update().addToSet("customer",order.getOrderId())).first();
-        System.out.println(result)*/;
+        System.out.println(result)*/
         System.out.println(customerUpdateResult);
         System.out.println(OrderUpdateResult);
 
@@ -77,6 +77,8 @@ public class CustomOrderRepository implements ICustomOrderRepository
                 .matching(Criteria.where("_id").is(order.getCustomer().getCustomerId()))
                 .apply(new Update().set("ordersIds", orders)).first();
         logger.info(first.toString());
+
+
         logger.info("removing: " + mongoTemplate.remove(order));
         // return true if deletion succeeded
         return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;

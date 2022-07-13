@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Value
-@JsonPropertyOrder({"orderName","orderDate","orderBill","itemsCounter","orderStatus","orderedItems","orderId"
+@JsonPropertyOrder({"orderName","orderDate ","orderBill","itemsCounter","orderStatus","orderedItems","orderId"
 ,"seatNumber"})
 public class OrderDto
 {

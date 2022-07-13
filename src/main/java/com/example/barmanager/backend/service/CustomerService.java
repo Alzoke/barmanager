@@ -20,7 +20,7 @@ public class CustomerService
     public Customer findCustomerByIdNumber(int idNumber)
     {
         Customer customer = customerRepository.findByIdNumber(idNumber)
-                .orElseThrow(() -> new CustomerNotFoundException(String.valueOf(idNumber) + "Id number"));
+                .orElseThrow(() -> new CustomerNotFoundException(idNumber + "Id number"));
 
         return customer;
     }

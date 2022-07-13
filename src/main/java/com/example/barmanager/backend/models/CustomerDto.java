@@ -11,7 +11,7 @@ public class CustomerDto
    @JsonIgnore
    private final Customer customer;
 
-    public String getname()
+    public String getName()
     {
         return
                 customer.getFirstName() + " " + customer.getLastName();

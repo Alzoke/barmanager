@@ -4,6 +4,9 @@ import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 @Service
 public class CustomerService
 {
@@ -21,4 +24,24 @@ public class CustomerService
 
         return customer;
     }
+
+    /**
+     * function that delete customer iff he exists
+     * @return the deleted customer
+     */
+    public Customer deleteCustomer(String customerId)
+    {
+        Customer deletedCustomer = null;
+
+        if ( customerId != null )
+        {
+            deletedCustomer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+            customerRepository.deleteById(customerId);
+        }
+
+        return deletedCustomer;
+    }
+
 }

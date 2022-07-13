@@ -1,5 +1,7 @@
 package com.example.barmanager.backend.models;
 
+
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Value;

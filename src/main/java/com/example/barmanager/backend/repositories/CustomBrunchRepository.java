@@ -81,8 +81,23 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
                 .apply(update).first();
 
         return employee;
+    }
 
+    public boolean deleteEmployee(Branch branch,String employeeIdToRemove)
+    {
+        List<String> employeesIds = branch.getEmployeesIds();
+        List<String> updatedEmployees = employeesIds.stream().filter(id ->
+                        !id.equals(employeeIdToRemove))
+                .collect(Collectors.toList());
+        System.out.println(updatedEmployees);
 
+        UpdateResult first = mongoTemplate.update(Branch.class)
+                .matching(Criteria.where("_id").is(branch.getId()))
+                .apply(new Update().set("employeesIds", updatedEmployees)).first();
+        System.out.println(first);
+
+        // return true if deletion succeeded
+        return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
     }
 }

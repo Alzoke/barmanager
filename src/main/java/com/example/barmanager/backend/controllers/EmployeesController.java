@@ -161,6 +161,19 @@ public class EmployeesController
         ).toUri()).body(employeeEntityModel);
     }
 
+    @DeleteMapping("employees/{id}")
+    public void deleteEmployee(@PathVariable String id){
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        System.out.println(employee.getBranches());
+        for ( Branch branch : employee.getBranches() )
+        {
+            customBrunchRepository.deleteEmployee(branch, id);
+        }
+        employeeRepository.delete(employee);
+
+    }
+
 
 
 

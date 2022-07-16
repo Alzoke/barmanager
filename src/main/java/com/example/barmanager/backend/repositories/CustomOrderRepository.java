@@ -53,10 +53,11 @@ public class CustomOrderRepository implements ICustomOrderRepository
                 .matching(Criteria.where("_id").is(order.getOrderId()))
                 .apply(new Update().set("customer",order.getCustomer())).first();
 
-       /* UpdateResult result = mongoTemplate.update(Order.class)
-                .matching(Criteria.where("id").is(order.getOrderId()))
-                .apply(new Update().addToSet("customer",order.getOrderId())).first();
-        System.out.println(result)*/
+    /*    UpdateResult branchUpdateResult = mongoTemplate.update(Branch.class)
+                .matching(Criteria.where("_id").is(order.getBranch().getId()))
+                .apply(new Update().push("orders",order)).first();*/
+
+
         System.out.println(customerUpdateResult);
         System.out.println(OrderUpdateResult);
 
@@ -122,6 +123,22 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
         return Optional.of(orders.get(0));
     }
+
+    public Optional<List<Order>> findOpenByBranch(Branch branch)
+    {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("branch").is(branch));
+        query.addCriteria(Criteria.where("orderStatus").is(eOrderStatus.Open));
+        List<Order> orders = mongoTemplate.find(query, Order.class);
+//        logger.info(String.valueOf(orders.get(0).getOrderedDrinks().size()));
+        if ( orders.isEmpty() )
+        {
+            return Optional.of(orders = new ArrayList<>());
+        }
+
+        return Optional.of(orders);
+    }
+
 
     @Override
     public List<Document> getTenMostOrderedDrinks() {

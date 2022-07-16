@@ -22,7 +22,7 @@ public class BrunchDtoAssembler implements RepresentationModelAssembler<BrunchDt
         return EntityModel.of(brunchDto,
                 linkTo(methodOn(BrunchesController.class)
                     .getBrunchDto(brunchDto.getBrunch().getId())).withSelfRel(),
-                linkTo(methodOn(BrunchesController.class).getAllBrunchesDto()).withRel("all brunches"));
+                linkTo(methodOn(BrunchesController.class).getAllBrunchesDto()).withRel("all branches"));
     }
 
     @Override

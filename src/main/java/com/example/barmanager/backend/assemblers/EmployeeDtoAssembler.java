@@ -1,10 +1,12 @@
-package com.example.barmanager.backend.controllers;
+package com.example.barmanager.backend.assemblers;
 
-import com.example.barmanager.backend.models.OrderDto;
+import com.example.barmanager.backend.controllers.EmployeesController;
+import com.example.barmanager.backend.models.EmployeeDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class EmployeeDtoAssembler implements RepresentationModelAssembler<Employ
     public EntityModel<EmployeeDto> toModel(EmployeeDto employeeDto )
     {
         return EntityModel.of(employeeDto,
-                linkTo(methodOn(EmployeesController.class).getEmployeeDto(employeeDto.getEmployee()
+                WebMvcLinkBuilder.linkTo(methodOn(EmployeesController.class).getEmployeeDto(employeeDto.getEmployee()
                         .getId())).withSelfRel(),
                 linkTo(methodOn(EmployeesController.class).getAllDtoEmployees()).withRel("all employees"));     }
 

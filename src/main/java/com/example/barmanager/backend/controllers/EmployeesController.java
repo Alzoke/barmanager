@@ -1,20 +1,29 @@
 package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.EmployeeAssembler;
+import com.example.barmanager.backend.assemblers.EmployeeDtoAssembler;
 import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
 import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
-import com.example.barmanager.backend.models.BrunchDto;
+import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
+import com.example.barmanager.backend.models.EmployeeDto;
+import com.example.barmanager.backend.repositories.CustomBrunchRepository;
+import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
+import com.example.barmanager.backend.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class EmployeesController
@@ -22,12 +31,40 @@ public class EmployeesController
     private final EmployeeAssembler employeeAssembler;
     private final EmployeeDtoAssembler employeeDtoAssembler;
     private final IEmployeeRepository employeeRepository;
+    private final IBrunchRepository brunchRepository;
+    private final CustomBrunchRepository customBrunchRepository;
 
-    public EmployeesController(EmployeeAssembler employeeAssembler, EmployeeDtoAssembler employeeDtoAssembler, IEmployeeRepository employeeRepository)
+    @Autowired private EmployeeService employeeService;
+
+    public EmployeesController(EmployeeAssembler employeeAssembler,
+                               EmployeeDtoAssembler employeeDtoAssembler,
+                               IEmployeeRepository employeeRepository,
+                               IBrunchRepository brunchRepository,
+                               CustomBrunchRepository customBrunchRepository)
     {
         this.employeeAssembler = employeeAssembler;
         this.employeeDtoAssembler = employeeDtoAssembler;
         this.employeeRepository = employeeRepository;
+        this.brunchRepository = brunchRepository;
+        this.customBrunchRepository = customBrunchRepository;
+    }
+    @PostMapping("/employees")
+    ResponseEntity<EntityModel<Employee>> createEmployee(@RequestBody Employee newEmployee,
+                                                         @RequestParam String branchId)
+    {
+        newEmployee.setBranches(new ArrayList<>());
+
+        /*Branch branch = brunchRepository.findById(branchId)
+                .orElseThrow(() -> new BrunchNotFoundException(branchId));
+        Employee savedEmployee = employeeRepository.save(newEmployee);
+
+        customBrunchRepository.addEmployee(branch,savedEmployee);*/
+        Employee savedEmployee = employeeService.createNewEmployee(newEmployee, branchId)
+                .orElseThrow(() -> new RuntimeException("Error while saving new employee"));
+
+        return ResponseEntity.created(linkTo(methodOn(EmployeesController.class)
+                        .getEmployee(savedEmployee.getId())).toUri())
+                .body(employeeAssembler.toModel(savedEmployee));
     }
 
     @GetMapping("/employees")
@@ -62,6 +99,38 @@ public class EmployeesController
                 .map(employeeDtoAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new BrunchNotFoundException(id));
+    }
+    @GetMapping("employees/filterByBranch")
+    public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
+    getEmployeesNotInBranch(@RequestParam String brunchId){
+        Branch brunch = brunchRepository.findById(brunchId)
+                .orElseThrow(()-> new BrunchNotFoundException(brunchId));
+
+        List<Employee> fittingEmployees = employeeRepository.findAll()
+                .stream().filter(employee -> !employee.getBranches().contains(brunch))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(
+                employeeDtoAssembler.toCollectionModel(
+                        StreamSupport.stream(fittingEmployees.spliterator(),
+                                        false)
+                                .map(EmployeeDto::new)
+                                .collect(Collectors.toList())));
+
+    }
+    @GetMapping("employees/findByBranches/{brunchId}")
+    public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
+    getByBranches(@PathVariable String brunchId){
+        Branch brunch = brunchRepository.findById(brunchId)
+                .orElseThrow(()-> new BrunchNotFoundException(brunchId));
+
+        List<Employee> fittingEmployees = employeeRepository.findByBranchesContains(brunch);
+        return ResponseEntity.ok(
+                employeeDtoAssembler.toCollectionModel(
+                        StreamSupport.stream(fittingEmployees.spliterator(),
+                                        false)
+                                .map(EmployeeDto::new)
+                                .collect(Collectors.toList())));
+
     }
 
 

@@ -17,4 +17,17 @@ public class EmployeeAdvice
         return notFoundException.getMessage();
     }
 
+    /**
+     * handler for saving new employee error
+     * @param exception - null pointer exception
+     * @return
+     */
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    String nullPointerHandler(RuntimeException exception)
+    {
+        return exception.getMessage();
+    }
+
 }

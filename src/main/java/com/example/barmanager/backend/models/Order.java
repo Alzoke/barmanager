@@ -21,6 +21,10 @@ public class Order
     private eOrderStatus orderStatus;
     private LocalDate orderDate;
     private int seatNumber;
+//    private String BranchId;
+//
+/*    @DocumentReference
+    Branch branch;*/
 
     public double getBill()
     {

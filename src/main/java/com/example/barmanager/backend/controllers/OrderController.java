@@ -2,14 +2,10 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.OrderAssembler;
 import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
+import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
-import com.example.barmanager.backend.models.Customer;
-import com.example.barmanager.backend.models.Order;
-import com.example.barmanager.backend.models.OrderDto;
-import com.example.barmanager.backend.models.eOrderStatus;
-import com.example.barmanager.backend.repositories.CustomOrderRepository;
-import com.example.barmanager.backend.repositories.ICustomerRepository;
-import com.example.barmanager.backend.repositories.IOrderRepository;
+import com.example.barmanager.backend.models.*;
+import com.example.barmanager.backend.repositories.*;
 import com.example.barmanager.backend.service.CustomerService;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -22,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -37,21 +34,25 @@ public class OrderController
     private final CustomOrderRepository customOrderRepository;
     private final ICustomerRepository customerRepository;
     private final OrderDtoAssembler orderDtoAssembler;
+    private final IBrunchRepository brunchRepository;
     private final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Autowired  private CustomerService customerService;
+    @Autowired
+    private CustomBrunchRepository customBrunchRepository;
 
     public OrderController(IOrderRepository orderRepository,
                            OrderAssembler orderAssembler,
                            CustomOrderRepository customOrderRepository,
                            ICustomerRepository customerRepository,
-                           OrderDtoAssembler orderDtoAssembler)
+                           OrderDtoAssembler orderDtoAssembler, IBrunchRepository brunchRepository)
     {
         this.orderRepository = orderRepository;
         this.orderAssembler = orderAssembler;
         this.customOrderRepository = customOrderRepository;
         this.customerRepository = customerRepository;
         this.orderDtoAssembler = orderDtoAssembler;
+        this.brunchRepository = brunchRepository;
     }
 
     @GetMapping("/orders/{id}")
@@ -74,10 +75,17 @@ public class OrderController
 
 
     @PostMapping("/orders")
-    ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder)
+    ResponseEntity<EntityModel<Order>> newOrder(@RequestBody Order newOrder,
+                                                @RequestParam Optional<String> branchId)
     {
         Customer customer = customerService.findCustomerByIdNumber(newOrder.getCustomer().getIdNumber());
-
+        Branch branch = null;
+        if ( branchId.isPresent() )
+        {
+             branch = brunchRepository.findById(branchId.get()).orElseThrow(() ->
+                    new BrunchNotFoundException(branchId.get()));
+        }
+//        newOrder.setBranch(branch);
         newOrder.setCustomer(customer);
         Order savedOrder = customOrderRepository.saveNewOrder(newOrder);
         System.out.println(savedOrder);
@@ -101,8 +109,8 @@ public class OrderController
     @GetMapping("/orders/openOrders")
     public ResponseEntity<CollectionModel<EntityModel<OrderDto>>> getOpenOrders()
     {
-        List<Order> orders = orderRepository
-                .findByOrderStatus(eOrderStatus.Open);
+
+        List<Order> orders = orderRepository.findByOrderStatus(eOrderStatus.Open);
         logger.info(orders.toString());
         return ResponseEntity.ok(
                 orderDtoAssembler.toCollectionModel(

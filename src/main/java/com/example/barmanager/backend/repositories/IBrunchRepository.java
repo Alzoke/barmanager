@@ -1,8 +1,11 @@
 package com.example.barmanager.backend.repositories;
 
-import com.example.barmanager.backend.models.Brunch;
+import com.example.barmanager.backend.models.Branch;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface IBrunchRepository extends MongoRepository<Brunch,String>
+import java.util.Optional;
+
+public interface IBrunchRepository extends MongoRepository<Branch,String>
 {
+    Optional<Branch> findBrunchByBranchName(String name);
 }

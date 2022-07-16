@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Value
-@JsonPropertyOrder({"brunchName","brunchId","numOfOrders","totalOrdersBill","numOfEmployees","employeesIds","orderIds"})
+@JsonPropertyOrder({"branchName","brunchId","numOfOrders","totalOrdersBill","numOfEmployees","employeesIds","orderIds"})
 public class BrunchDto
 {
     @JsonIgnore
-    private final Brunch brunch;
+    private final Branch brunch;
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
-    public String getBrunchName()
+    public String getBranchName()
     {
-        return String.format("%s brunch",brunch.getBrunchName());
+        return String.format("%s",brunch.getBranchName());
     }
 
     public String getBrunchId()

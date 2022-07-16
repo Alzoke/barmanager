@@ -1,9 +1,7 @@
 package com.example.barmanager.backend.assemblers;
 
 import com.example.barmanager.backend.controllers.BrunchesController;
-import com.example.barmanager.backend.controllers.CustomerController;
-import com.example.barmanager.backend.models.Brunch;
-import com.example.barmanager.backend.models.Customer;
+import com.example.barmanager.backend.models.Branch;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -17,22 +15,22 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
-public class BrunchAssembler implements RepresentationModelAssembler<Brunch, EntityModel<Brunch>>
+public class BrunchAssembler implements RepresentationModelAssembler<Branch, EntityModel<Branch>>
 {
     @Override
-    public EntityModel<Brunch> toModel(Brunch brunch)
+    public EntityModel<Branch> toModel(Branch brunch)
     {
         return EntityModel.of(brunch,
                 WebMvcLinkBuilder.linkTo(methodOn(BrunchesController.class).getAllBrunches())
-                        .withRel("All brunches"),
+                        .withRel("All branches"),
                 linkTo(methodOn(BrunchesController.class).getBrunch(brunch.getId()))
                         .withSelfRel());    }
 
     @Override
-    public CollectionModel<EntityModel<Brunch>> toCollectionModel(Iterable<? extends Brunch> entities)
+    public CollectionModel<EntityModel<Branch>> toCollectionModel(Iterable<? extends Branch> entities)
     {
-        List<Brunch> brunches = (List<Brunch>) entities;
-        List<EntityModel<Brunch>> entityProducts = brunches.stream()
+        List<Branch> brunches = (List<Branch>) entities;
+        List<EntityModel<Branch>> entityProducts = brunches.stream()
                 .map(this::toModel).collect(Collectors.toList());
 
         Link link = linkTo(methodOn(BrunchesController.class).getAllBrunches()).withSelfRel();

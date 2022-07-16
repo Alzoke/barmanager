@@ -1,12 +1,16 @@
 package com.example.barmanager.backend.repositories;
-import com.example.barmanager.backend.models.Brunch;
+import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
+import com.example.barmanager.backend.models.Order;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomBrunchRepository implements ICustomBrunchRepository
@@ -15,10 +19,10 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void addEmployee(Brunch brunch, Employee employee)
+    public void addEmployee(Branch brunch, Employee employee)
     {
         // first direction (brunch -> employee)
-        UpdateResult  updateResultBrunch = mongoTemplate.update(Brunch.class)
+        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(brunch.getId()))
                 .apply(new Update().push("employeesIds", employee.getId())).first();
         System.out.println(updateResultBrunch);
@@ -26,9 +30,43 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         // second direction (employee -> brunch)
         UpdateResult  updateResultEmployee = mongoTemplate.update(Employee.class)
                 .matching(Criteria.where("_id").is(employee.getId()))
-                .apply(new Update().push("brunches", brunch)).first();
+                .apply(new Update().push("branches", brunch)).first();
         System.out.println(updateResultEmployee);
 
 
+    }
+
+    public void removeEmployee(Branch branch, Employee employee)
+    {
+//        brunch.getEmployeesIds().remove(employee.getId());
+        List<String> employeesIds = branch.getEmployeesIds().stream()
+                .filter(employeeId -> employeeId != employee.getId())
+                .collect(Collectors.toList());
+        List<Branch> branches = employee.getBranches().stream()
+                .filter(currentBranch -> currentBranch.getId() != branch.getId())
+                .collect(Collectors.toList());
+        employee.getBranches().remove(branch);
+        branch.getEmployeesIds().remove(employee.getId());
+//        System.out.println(branches);
+        // first direction (brunch -> employee)
+        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+                .matching(Criteria.where("_id").is(branch.getId()))
+                .apply(new Update().set("employeesIds", branch.getEmployeesIds())).first();
+        System.out.println(updateResultBrunch);
+
+        // second direction (employee -> brunch)
+        UpdateResult  updateResultEmployee = mongoTemplate.update(Employee.class)
+                .matching(Criteria.where("_id").is(employee.getId()))
+                .apply(new Update().set("branches", employee.getBranches())).first();
+        System.out.println(updateResultEmployee);
+    }
+
+    @Override
+    public void addOrder(Branch brunch, Order order)
+    {
+        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+                .matching(Criteria.where("_id").is(brunch.getId()))
+                .apply(new Update().push("orders", order)).first();
+        System.out.println(updateResultBrunch);
     }
 }

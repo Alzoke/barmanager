@@ -4,6 +4,7 @@ import com.example.barmanager.backend.models.Order;
 import org.bson.Document;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ICustomOrderRepository
@@ -12,4 +13,5 @@ public interface ICustomOrderRepository
     List<Document> getTenMostOrderedDrinks();
     List<Document> getProfitsByYear(int year);
     boolean deleteOrder(Order order);
+
 }

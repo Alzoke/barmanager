@@ -1,7 +1,5 @@
 package com.example.barmanager.backend.repositories;
-import com.example.barmanager.backend.models.Branch;
-import com.example.barmanager.backend.models.Employee;
-import com.example.barmanager.backend.models.Order;
+import com.example.barmanager.backend.models.*;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -68,5 +66,23 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
                 .matching(Criteria.where("_id").is(brunch.getId()))
                 .apply(new Update().push("orders", order)).first();
         System.out.println(updateResultBrunch);
+    }
+
+    public Employee updateEmployee(Employee employee)
+    {
+        Update update = new Update();
+        update.set("salaryPerHour",employee.getSalaryPerHour());
+        update.set("idNumber",employee.getIdNumber());
+        update.set("firstName",employee.getFirstName());
+        update.set("lastName", employee.getLastName());
+        update.set("branches",employee.getBranches());
+        UpdateResult updateResult = mongoTemplate.update(Employee.class)
+                .matching(Criteria.where("_id").is(employee.getId()))
+                .apply(update).first();
+
+        return employee;
+
+
+
     }
 }

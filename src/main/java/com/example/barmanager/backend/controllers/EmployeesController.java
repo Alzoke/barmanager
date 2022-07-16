@@ -14,6 +14,7 @@ import com.example.barmanager.backend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -131,6 +132,33 @@ public class EmployeesController
                                 .map(EmployeeDto::new)
                                 .collect(Collectors.toList())));
 
+    }
+
+    @PutMapping("employees/{id}")
+    public ResponseEntity<EntityModel<Employee>> updateEmployee(@RequestBody Employee newEmployee,
+                                                                   @PathVariable String id)
+    {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() ->
+                new EmployeeNotFoundException(id));
+        newEmployee.setId(id);
+        newEmployee.setIdNumber(employee.getIdNumber());
+        newEmployee.setBranches(employee.getBranches());
+        Employee updateEmployee = customBrunchRepository.updateEmployee(newEmployee);
+//        Employee updatedEmployee = employeeRepository.findById(id).map(employee -> {
+//            employee.setBranches(newEmployee.getBranches());
+//            employee.setSalaryPerHour(newEmployee.getSalaryPerHour());
+//            employee.setFirstName(newEmployee.getFirstName());
+//            employee.setLastName(newEmployee.getLastName());
+//            employee.setIdNumber(employee.getIdNumber());
+//            employee.setBranches(employee.getBranches());
+//            return employeeRepository.save(employee);
+//        }).orElseThrow(() -> new EmployeeNotFoundException(id));
+
+        EntityModel<Employee> employeeEntityModel =
+                employeeAssembler.toModel(updateEmployee);
+        return ResponseEntity.created(employeeEntityModel.getRequiredLink(
+                IanaLinkRelations.SELF
+        ).toUri()).body(employeeEntityModel);
     }
 
 

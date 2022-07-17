@@ -24,6 +24,13 @@ public class EmployeeService
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * function for validation of new employee
+     * @param employee to validate
+     * @return boolean (valid or not)
+     * @throws IllegalArgumentException if name is empty
+     * @throws NullPointerException if name is null
+     */
     public boolean validationOfNewEmployee(Employee employee) throws IllegalArgumentException,
             NullPointerException
     {
@@ -38,6 +45,12 @@ public class EmployeeService
         return true;
     }
 
+    /**
+     * function that creates new employee
+     * @param newEmployee
+     * @param branchId
+     * @return optional of created new employee
+     */
     public Optional<Employee> createNewEmployee(Employee newEmployee, String branchId)
     {
         Employee savedEmployee = null;

@@ -87,6 +87,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
     }
 
+    @Override
     public Order closeOrder(Order order)
     {
         Order order1 = orderRepository.findById(order.getOrderId()).get();
@@ -109,6 +110,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
         return updatedOrder;
     }
 
+    @Override
     public Optional<Order> findCloseBySeat(int seatNumber)
     {
         Query query = new Query();

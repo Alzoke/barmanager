@@ -1,14 +1,14 @@
 package com.example.barmanager.backend.exceptions;
 
-public class BrunchNotFoundException extends RuntimeException
+public class BranchNotFoundException extends RuntimeException
 {
 
-    public BrunchNotFoundException()
+    public BranchNotFoundException()
     {
         super(String.format("Cant find Branch"));
 
     }
-    public BrunchNotFoundException(String id)
+    public BranchNotFoundException(String id)
     {
         super(String.format("Cant find Branch with corresponding id: %s",id));
 

@@ -1,6 +1,6 @@
 package com.example.barmanager.backend.assemblers;
 
-import com.example.barmanager.backend.controllers.BrunchesController;
+import com.example.barmanager.backend.controllers.BranchesController;
 import com.example.barmanager.backend.models.Branch;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
-public class BrunchAssembler implements RepresentationModelAssembler<Branch, EntityModel<Branch>>
+public class BranchAssembler implements RepresentationModelAssembler<Branch, EntityModel<Branch>>
 {
     @Override
     public EntityModel<Branch> toModel(Branch brunch)
     {
         return EntityModel.of(brunch,
-                WebMvcLinkBuilder.linkTo(methodOn(BrunchesController.class).getAllBrunches())
+                WebMvcLinkBuilder.linkTo(methodOn(BranchesController.class).getAllBrunches())
                         .withRel("All branches"),
-                linkTo(methodOn(BrunchesController.class).getBrunch(brunch.getId()))
+                linkTo(methodOn(BranchesController.class).getBrunch(brunch.getId()))
                         .withSelfRel());    }
 
     @Override
@@ -33,7 +33,7 @@ public class BrunchAssembler implements RepresentationModelAssembler<Branch, Ent
         List<EntityModel<Branch>> entityProducts = brunches.stream()
                 .map(this::toModel).collect(Collectors.toList());
 
-        Link link = linkTo(methodOn(BrunchesController.class).getAllBrunches()).withSelfRel();
+        Link link = linkTo(methodOn(BranchesController.class).getAllBrunches()).withSelfRel();
         return CollectionModel.of(entityProducts, link);
     }
 }

@@ -13,5 +13,7 @@ public interface ICustomOrderRepository
     List<Document> getTenMostOrderedDrinks();
     List<Document> getProfitsByYear(int year);
     boolean deleteOrder(Order order);
+    Order closeOrder(Order order);
+    Optional<Order> findCloseBySeat(int seatNumber);
 
 }

@@ -2,7 +2,7 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.EmployeeAssembler;
 import com.example.barmanager.backend.assemblers.EmployeeDtoAssembler;
-import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
+import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
@@ -56,7 +56,7 @@ public class EmployeesController
         newEmployee.setBranches(new ArrayList<>());
 
         /*Branch branch = brunchRepository.findById(branchId)
-                .orElseThrow(() -> new BrunchNotFoundException(branchId));
+                .orElseThrow(() -> new BranchNotFoundException(branchId));
         Employee savedEmployee = employeeRepository.save(newEmployee);
 
         customBrunchRepository.addEmployee(branch,savedEmployee);*/
@@ -99,13 +99,13 @@ public class EmployeesController
                 .map(EmployeeDto::new)
                 .map(employeeDtoAssembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new BrunchNotFoundException(id));
+                .orElseThrow(() -> new BranchNotFoundException(id));
     }
     @GetMapping("employees/filterByBranch")
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
     getEmployeesNotInBranch(@RequestParam String brunchId){
         Branch brunch = brunchRepository.findById(brunchId)
-                .orElseThrow(()-> new BrunchNotFoundException(brunchId));
+                .orElseThrow(()-> new BranchNotFoundException(brunchId));
 
         List<Employee> fittingEmployees = employeeRepository.findAll()
                 .stream().filter(employee -> !employee.getBranches().contains(brunch))
@@ -122,7 +122,7 @@ public class EmployeesController
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
     getByBranches(@PathVariable String brunchId){
         Branch brunch = brunchRepository.findById(brunchId)
-                .orElseThrow(()-> new BrunchNotFoundException(brunchId));
+                .orElseThrow(()-> new BranchNotFoundException(brunchId));
 
         List<Employee> fittingEmployees = employeeRepository.findByBranchesContains(brunch);
         return ResponseEntity.ok(
@@ -173,8 +173,5 @@ public class EmployeesController
         employeeRepository.delete(employee);
 
     }
-
-
-
 
 }

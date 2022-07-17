@@ -9,31 +9,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Value
-@JsonPropertyOrder({"branchName","brunchId","numOfOrders","totalOrdersBill","numOfEmployees","employeesIds","orderIds"})
-public class BrunchDto
+@JsonPropertyOrder({"branchName","branchId","numOfOrders","totalOrdersBill","numOfEmployees","employeesIds","orderIds"})
+public class BranchDto
 {
     @JsonIgnore
-    private final Branch brunch;
+    private final Branch branch;
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     public String getBranchName()
     {
-        return String.format("%s",brunch.getBranchName());
+        return String.format("%s", branch.getBranchName());
     }
 
     public String getBrunchId()
     {
-        return brunch.getId();
+        return branch.getId();
     }
     public int getNumOfOrders()
     {
-        return brunch.getOrders().size();
+        return branch.getOrders().size();
     }
 
     public int getNumOfEmployees()
     {
-        return brunch.getEmployeesIds().size();
+        return branch.getEmployeesIds().size();
     }
 
 
@@ -41,7 +41,7 @@ public class BrunchDto
     {
 
         double total = 0.0;
-        for ( Order order : brunch.getOrders() )
+        for ( Order order : branch.getOrders() )
         {
             total += order.getBill();
         }
@@ -50,14 +50,14 @@ public class BrunchDto
 
     public List<String> getOrderIds(){
         List<String> orderIds = new ArrayList<>();
-        brunch.getOrders().forEach(order -> orderIds.add(order.getOrderId()));
+        branch.getOrders().forEach(order -> orderIds.add(order.getOrderId()));
 
         return orderIds;
     }
 
     public List<String> getEmployeesIds(){
         List<String> employeesIds = new ArrayList<>();
-        for ( String employeesId : brunch.getEmployeesIds() )
+        for ( String employeesId : branch.getEmployeesIds() )
         {
             employeesIds.add(employeesId);
         }

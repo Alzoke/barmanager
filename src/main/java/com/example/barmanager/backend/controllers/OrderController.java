@@ -2,7 +2,7 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.OrderAssembler;
 import com.example.barmanager.backend.assemblers.OrderDtoAssembler;
-import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
+import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.*;
 import com.example.barmanager.backend.repositories.*;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -83,7 +82,7 @@ public class OrderController
         if ( branchId.isPresent() )
         {
              branch = brunchRepository.findById(branchId.get()).orElseThrow(() ->
-                    new BrunchNotFoundException(branchId.get()));
+                    new BranchNotFoundException(branchId.get()));
         }
 //        newOrder.setBranch(branch);
         newOrder.setCustomer(customer);
@@ -159,10 +158,8 @@ public class OrderController
     {
         ResponseEntity<EntityModel<OrderDto>> entity =
                 customOrderRepository.findCloseBySeat(seatNumber)
-//                orderRepository.findByOrderStatusAndSeatNumber(orderStatus, seatNumber)
                 .map(OrderDto::new).map(orderDtoAssembler::toModel)
                 .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-//        logger.info(String.valueOf(Objects.requireNonNull(entity.getBody()).getContent().getOrderedItems().size()));
         return entity;
 
 
@@ -190,8 +187,6 @@ public class OrderController
         if ( isSucceeded )
             return ResponseEntity.ok(orderEntityModel);
         else return ResponseEntity.badRequest().body(orderEntityModel);
-
-
 
     }
 }

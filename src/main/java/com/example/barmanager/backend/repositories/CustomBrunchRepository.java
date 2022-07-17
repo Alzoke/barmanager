@@ -39,6 +39,18 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 
     }
 
+
+
+    @Override
+    public void addOrder(Branch brunch, Order order)
+    {
+        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+                .matching(Criteria.where("_id").is(brunch.getId()))
+                .apply(new Update().push("orders", order)).first();
+        System.out.println(updateResultBrunch);
+    }
+
+    @Override
     public void removeEmployee(Branch branch, Employee employee)
     {
 //        brunch.getEmployeesIds().remove(employee.getId());
@@ -65,14 +77,6 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     }
 
     @Override
-    public void addOrder(Branch brunch, Order order)
-    {
-        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
-                .matching(Criteria.where("_id").is(brunch.getId()))
-                .apply(new Update().push("orders", order)).first();
-        System.out.println(updateResultBrunch);
-    }
-
     public Employee updateEmployee(Employee employee)
     {
         Update update = new Update();
@@ -88,6 +92,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         return employee;
     }
 
+    @Override
     public boolean deleteEmployee(Branch branch,String employeeIdToRemove)
     {
         List<String> employeesIds = branch.getEmployeesIds();
@@ -105,7 +110,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
     }
-
+    @Override
     public boolean removeBranch(Branch branch)
     {
         List<String> employeesIds = branch.getEmployeesIds();

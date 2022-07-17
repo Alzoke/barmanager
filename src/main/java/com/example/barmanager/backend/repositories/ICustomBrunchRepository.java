@@ -8,5 +8,10 @@ public interface ICustomBrunchRepository
 {
     void addEmployee(Branch brunch, Employee employee);
     void addOrder(Branch brunch, Order order);
+    void removeEmployee(Branch branch, Employee employee);
+    Employee updateEmployee(Employee employee);
+    boolean deleteEmployee(Branch branch,String employeeIdToRemove);
+    boolean removeBranch(Branch branch);
+
 
 }

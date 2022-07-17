@@ -1,6 +1,6 @@
 package com.example.barmanager.backend.service;
 
-import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
+import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
 import com.example.barmanager.backend.repositories.CustomBrunchRepository;
@@ -43,7 +43,7 @@ public class EmployeeService
         Employee savedEmployee = null;
 
         Branch branch = brunchRepository.findById(branchId)
-                .orElseThrow(() -> new BrunchNotFoundException(branchId));
+                .orElseThrow(() -> new BranchNotFoundException(branchId));
 
         if ( validationOfNewEmployee(newEmployee) )
         {

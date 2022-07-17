@@ -35,8 +35,10 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
 
 
     @Override
-    public Iterable<? extends BarDrink> getFilteredByMultipleParams(Optional<String> category, Optional<String> ingredient,
-                                                                    Optional<String> alcoholFilter, Optional<Double> minPrice,
+    public Iterable<? extends BarDrink> getFilteredByMultipleParams(Optional<String> category,
+                                                                    Optional<String> ingredient,
+                                                                    Optional<String> alcoholFilter,
+                                                                    Optional<Double> minPrice,
                                                                     Optional<Double> maxPrice) {
         Query query = new Query();
         category.ifPresent(s -> query.addCriteria(Criteria.where("category").is(s)));

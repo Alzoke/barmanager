@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class BrunchAdvice
+public class BranchAdvice
 {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(BrunchNotFoundException.class)
-    String brunchNotFoundHandler(BrunchNotFoundException notFoundException)
+    @ExceptionHandler(BranchNotFoundException.class)
+    String brunchNotFoundHandler(BranchNotFoundException notFoundException)
     {
         return notFoundException.getMessage();
     }

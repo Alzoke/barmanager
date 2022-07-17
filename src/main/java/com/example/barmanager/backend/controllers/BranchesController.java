@@ -57,7 +57,7 @@ public class BranchesController
     }
 
     /**
-     * function which handle get request got receiving single branch by id in the DB
+     * function which handle get request and receiving single branch by id in the DB
      * @param id  - represents id of the requested branch in DB
      * @return return Entity model of requested branch
      */
@@ -85,9 +85,9 @@ public class BranchesController
     }
 
     /**
-     * function which handle get request got receiving single DTO branch
+     * function which handle get request get single DTO branch
      * @param id  - represents id of the requested branch in DB
-     * @return return Entity model of requested branch as DTO branch
+     * @return return Entity model of requested branch as DTO
      */
     @GetMapping("/branches/{id}/info")
     public ResponseEntity<EntityModel<BranchDto>> getBrunchDto(@PathVariable String id)

@@ -46,12 +46,21 @@ public class CustomerController
         this.customerService = customerService;
     }
 
+    /**
+     * function that handle Get request for get all exiting customers
+     * @return Collection model of entities model of customers with status code "ok"
+     */
     @GetMapping("/customers")
     public ResponseEntity<CollectionModel<EntityModel<Customer>>> getAllCustomers()
     {
         return ResponseEntity.ok(customerAssembler.toCollectionModel(customerRepository.findAll()));
     }
 
+    /**
+     * function which handle GET request and  receiving single customer by id in the DB
+     * @param id  - represents id of the requested customer in DB
+     * @return return Entity model of requested customer
+     */
     @GetMapping("/customers/{id}")
     public ResponseEntity<EntityModel<Customer>> getCustomer(@PathVariable String id)
     {
@@ -61,11 +70,17 @@ public class CustomerController
 
     }
 
+    /**
+     * function that handle Post request for creating new  customer
+     * @param newCustomer new customer to create and save into db
+     * @return created customer
+     */
     @PostMapping("/customers")
     ResponseEntity<EntityModel<Customer>> createCustomer(@RequestBody Customer newCustomer)
     {
         logger.info("received Customer:"  + newCustomer);
-        // init orderId field becasue we get an customer item from front side without orders at first
+        // initialization orderId field because
+        // we get a customer  without orders at first
         newCustomer.setOrdersIds(new ArrayList<>());
         Customer savedCustomer = customerRepository.save(newCustomer);
         return ResponseEntity.created(linkTo(methodOn(CustomerController.class)
@@ -73,6 +88,10 @@ public class CustomerController
                 .body(customerAssembler.toModel(savedCustomer));
     }
 
+    /**
+     * function that handle Get request for get all exiting customers (as DTOs)
+     * @return Collection model of entities model of Dtos customers with status code "ok"
+     */
     @GetMapping("/customers/info")
     public ResponseEntity<CollectionModel<EntityModel<CustomerDto>>> getCustomersDtos()
     {
@@ -84,6 +103,11 @@ public class CustomerController
                                 .collect(Collectors.toList())));
     }
 
+    /**
+     * function which handle GET  request and get single DTO Customer
+     * @param id  - represents id of the requested customer in DB
+     * @return return Entity model of requested customer as DTO
+     */
     @GetMapping("/customers/{id}/info")
     public ResponseEntity<EntityModel<CustomerDto>> getCustomerDto(@PathVariable String id)
     {
@@ -94,6 +118,11 @@ public class CustomerController
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
+    /**
+     * function that handle DELETE request for removing customer
+     * @param id of customer to delete
+     * @return deleted customer
+     */
     @DeleteMapping("/customers/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable String id)
     {
@@ -103,6 +132,12 @@ public class CustomerController
         return ResponseEntity.ok(deletedCustomerEntityModel);
     }
 
+    /**
+     * function that handle Put req for updating customer
+     * @param newCustomer new updated customer,
+     * @param id of customer to update
+     * @return updated customer as entity model with 'ok' status code
+     */
     @PutMapping ("/customers/{id}")
     ResponseEntity<EntityModel<Customer>> updatedCustomer(@RequestBody Customer newCustomer,
                                                           @PathVariable String id)

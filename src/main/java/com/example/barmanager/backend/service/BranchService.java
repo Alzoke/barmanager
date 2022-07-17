@@ -25,6 +25,11 @@ public class BranchService
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * function that add new employee into Branch
+     * @param employeeId id of employee to be added
+     * @param branchId id of branch' employee need to be added in
+     */
     public void addExistingEmployeeToBranch(String employeeId, String branchId)
     {
         Employee employee = employeeRepository.findById(employeeId)
@@ -36,6 +41,11 @@ public class BranchService
 
     }
 
+    /**
+     * function that remove employee from branch
+     * @param employeeId id of employee to be removed
+     * @param branchId id of branch to remove from
+     */
     public void removeExistingEmployeeToBranch(String employeeId, String branchId)
     {
         Employee employee = employeeRepository.findById(employeeId)

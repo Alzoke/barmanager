@@ -49,6 +49,13 @@ public class EmployeesController
         this.brunchRepository = brunchRepository;
         this.customBrunchRepository = customBrunchRepository;
     }
+
+    /**
+     * function that handle Post request for creating new  employee
+     * @param newEmployee new employee to save into db
+     * @param branchId the brunch id that new employee should be added
+     * @return created employee
+     */
     @PostMapping("/employees")
     ResponseEntity<EntityModel<Employee>> createEmployee(@RequestBody Employee newEmployee,
                                                          @RequestParam String branchId)
@@ -68,12 +75,21 @@ public class EmployeesController
                 .body(employeeAssembler.toModel(savedEmployee));
     }
 
+    /**
+     * function that handle Get request for get all exiting employees
+     * @return Collection model of entities model of employees with status code "ok"
+     */
     @GetMapping("/employees")
     public ResponseEntity<CollectionModel<EntityModel<Employee>>> getAllEmployees()
     {
         return ResponseEntity.ok(employeeAssembler.toCollectionModel(employeeRepository.findAll()));
     }
 
+    /**
+     * function which handle get request and receiving single employee by id
+     * @param id  - represents id of the requested employee in DB
+     * @return return Entity model of requested employee
+     */
     @GetMapping("/employees/{id}")
     public ResponseEntity<EntityModel<Employee>> getEmployee(@PathVariable String id)
     {
@@ -82,6 +98,10 @@ public class EmployeesController
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
     }
 
+    /**
+     * function that handle Get request for get all exiting employees (as DTOs)
+     * @return Collection model of entities model of Dtos employees with status code "ok"
+     */
     @GetMapping("/employees/info")
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>> getAllDtoEmployees()
     {
@@ -92,6 +112,11 @@ public class EmployeesController
                                 .map(EmployeeDto::new)
                                 .collect(Collectors.toList())));    }
 
+    /**
+     * function which handle get request get single DTO employee
+     * @param id  - represents id of the requested employee in DB
+     * @return return Entity model of requested employee as DTO
+     */
     @GetMapping("/employees/{id}/info")
     public ResponseEntity<EntityModel<EmployeeDto>> getEmployeeDto(@PathVariable String id)
     {
@@ -101,9 +126,16 @@ public class EmployeesController
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new BranchNotFoundException(id));
     }
+
+    /**
+     * function which handle Get req and get employee not in the specific branch
+     * @param brunchId id of requested branch
+     * @return fitting employees as collection model of entity model of employee as dtos
+     */
     @GetMapping("employees/filterByBranch")
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
     getEmployeesNotInBranch(@RequestParam String brunchId){
+
         Branch brunch = brunchRepository.findById(brunchId)
                 .orElseThrow(()-> new BranchNotFoundException(brunchId));
 
@@ -118,6 +150,12 @@ public class EmployeesController
                                 .collect(Collectors.toList())));
 
     }
+
+    /**
+     * function which handle Get req and get employee  in the specific branch
+     * @param brunchId id of requested branch
+     * @return fitting employees as collection model of entity model of employee as dtos
+     */
     @GetMapping("employees/findByBranches/{brunchId}")
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
     getByBranches(@PathVariable String brunchId){
@@ -134,6 +172,12 @@ public class EmployeesController
 
     }
 
+    /**
+     * function that handle put req for updating an existing employee
+     * @param newEmployee employee with updated data
+     * @param id of requested employee to updated
+     * @return updated employee
+     */
     @PutMapping("employees/{id}")
     public ResponseEntity<EntityModel<Employee>> updateEmployee(@RequestBody Employee newEmployee,
                                                                    @PathVariable String id)
@@ -161,6 +205,10 @@ public class EmployeesController
         ).toUri()).body(employeeEntityModel);
     }
 
+    /**
+     * function which handle delete req and delete employee
+     * @param id of requested employee to be deleted
+     */
     @DeleteMapping("employees/{id}")
     public void deleteEmployee(@PathVariable String id){
         Employee employee = employeeRepository.findById(id)

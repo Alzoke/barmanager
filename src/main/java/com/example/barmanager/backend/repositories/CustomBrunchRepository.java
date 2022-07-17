@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * class that implements  ICustomerRepository
+ * contains custom quires and function that works with the DB
+ */
 @Component
 public class CustomBrunchRepository implements ICustomBrunchRepository
 {
@@ -20,6 +24,12 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     @Autowired
     private IEmployeeRepository employeeRepository;
 
+    /**
+     * custom function that insert employee to brunch and make branch contain this employee
+     * many-to-many relationship
+     * @param brunch where employee should be inserted
+     * @param employee to be inserted into branch
+     */
     @Override
     public void addEmployee(Branch brunch, Employee employee)
     {
@@ -39,8 +49,11 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 
     }
 
-
-
+    /**
+     * function that insert order to specific branch
+     * @param brunch
+     * @param order
+     */
     @Override
     public void addOrder(Branch brunch, Order order)
     {
@@ -50,6 +63,11 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         System.out.println(updateResultBrunch);
     }
 
+    /**
+     * function that remove from DB employee from specific branch
+     * @param branch to remove from
+     * @param employee to be removed
+     */
     @Override
     public void removeEmployee(Branch branch, Employee employee)
     {
@@ -76,6 +94,11 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         System.out.println(updateResultEmployee);
     }
 
+    /**
+     * function which responsible for updating employee in DB
+     * @param employee
+     * @return
+     */
     @Override
     public Employee updateEmployee(Employee employee)
     {
@@ -92,6 +115,12 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         return employee;
     }
 
+    /**
+     * function which responsible for removing employee from DB
+     * @param branch
+     * @param employeeIdToRemove
+     * @return
+     */
     @Override
     public boolean deleteEmployee(Branch branch,String employeeIdToRemove)
     {
@@ -110,6 +139,12 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
     }
+
+    /**
+     * function which responsible for removing branch from DB
+     * @param branch to be removed
+     * @return boolean that indicates is deleted or not
+     */
     @Override
     public boolean removeBranch(Branch branch)
     {

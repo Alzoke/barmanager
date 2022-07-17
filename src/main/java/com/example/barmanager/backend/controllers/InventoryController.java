@@ -75,7 +75,6 @@ public class InventoryController {
     @GetMapping("/inventory")
     public ResponseEntity<CollectionModel<EntityModel<BarDrink>>> getAllDrinks() {
         return ResponseEntity.ok(barDrinkAssembler.toCollectionModel(inventoryRepo.findAll()));
-
     }
 
     /**

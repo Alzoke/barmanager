@@ -5,6 +5,7 @@ import com.example.barmanager.backend.assemblers.BrunchDtoAssembler;
 import com.example.barmanager.backend.exceptions.BrunchNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.BrunchDto;
+import com.example.barmanager.backend.repositories.CustomBrunchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.service.BranchService;
 import org.springframework.hateoas.CollectionModel;
@@ -27,15 +28,18 @@ public class BrunchesController
     private final BrunchDtoAssembler brunchDtoAssembler;
     private final IBrunchRepository brunchRepository;
     private final BranchService branchService;
+    private final CustomBrunchRepository customBrunchRepository;
 
     public BrunchesController(BrunchAssembler brunchAssembler,
                               BrunchDtoAssembler brunchDtoAssembler,
-                              IBrunchRepository brunchRepository, BranchService branchService)
+                              IBrunchRepository brunchRepository, BranchService branchService,
+                              CustomBrunchRepository customBrunchRepository)
     {
         this.brunchAssembler = brunchAssembler;
         this.brunchDtoAssembler = brunchDtoAssembler;
         this.brunchRepository = brunchRepository;
         this.branchService = branchService;
+        this.customBrunchRepository = customBrunchRepository;
     }
 
     @GetMapping("/brunches")
@@ -120,6 +124,23 @@ public class BrunchesController
         return ResponseEntity.created(linkTo(methodOn(BrunchesController.class)
                         .getBrunch(savedBranch.getId())).toUri())
                 .body(brunchAssembler.toModel(savedBranch));
+    }
+
+    @DeleteMapping("/branches/{id}")
+    public ResponseEntity<?> deleteBranch(@PathVariable String id)
+    {
+        Branch branchToDelete = brunchRepository.findById(id)
+                .orElseThrow(() -> new BrunchNotFoundException(id));
+        boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);
+        EntityModel<Branch> branchEntityModel = brunchAssembler.toModel(branchToDelete);
+
+        if ( isDeleted ){
+            return ResponseEntity.ok(branchEntityModel);
+        }
+        else {
+            return ResponseEntity.badRequest().body("cant remove desire branch");
+        }
+
     }
 
 

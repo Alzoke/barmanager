@@ -1,5 +1,7 @@
 package com.example.barmanager.backend.repositories;
+import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.*;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,11 +17,14 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 {
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private IEmployeeRepository employeeRepository;
 
     @Override
     public void addEmployee(Branch brunch, Employee employee)
     {
         // first direction (brunch -> employee)
+        employee.getBranches().add(brunch);
         UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(brunch.getId()))
                 .apply(new Update().push("employeesIds", employee.getId())).first();
@@ -99,5 +104,22 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         // return true if deletion succeeded
         return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
+    }
+
+    public boolean removeBranch(Branch branch)
+    {
+        List<String> employeesIds = branch.getEmployeesIds();
+        for ( String employeesId : employeesIds )
+        {
+            Employee employee = employeeRepository.findById(employeesId)
+                    .orElseThrow(() -> new EmployeeNotFoundException(employeesId));
+            employee.getBranches().remove(branch);
+
+            updateEmployee(employee);
+        }
+
+        DeleteResult remove = mongoTemplate.remove(branch);
+
+        return remove.getDeletedCount() > 0;
     }
 }

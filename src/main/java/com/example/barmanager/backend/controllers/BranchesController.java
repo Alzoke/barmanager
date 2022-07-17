@@ -21,6 +21,9 @@ import java.util.stream.StreamSupport;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * class which represents Branches Controller;
+ */
 @RestController
 public class BranchesController
 {
@@ -42,6 +45,10 @@ public class BranchesController
         this.customBrunchRepository = customBrunchRepository;
     }
 
+    /**
+     * function that handle Get request for get all exiting branches
+     * @return Collection model of entities model of Branch with status code "ok"
+     */
     @GetMapping("/branches")
     public ResponseEntity<CollectionModel<EntityModel<Branch>>> getAllBrunches()
     {
@@ -49,6 +56,11 @@ public class BranchesController
 
     }
 
+    /**
+     * function which handle get request got receiving single branch by id in the DB
+     * @param id  - represents id of the requested branch in DB
+     * @return return Entity model of requested branch
+     */
     @GetMapping("/branches/{id}")
     public ResponseEntity<EntityModel<Branch>> getBrunch(@PathVariable String id)
     {
@@ -57,6 +69,10 @@ public class BranchesController
                 .orElseThrow(() -> new BranchNotFoundException(id));
     }
 
+    /**
+     * function that handle Get request for get all exiting branches (as DTOs)
+     * @return Collection model of entities model of Dtos Branches with status code "ok"
+     */
     @GetMapping("/branches/info")
     public ResponseEntity<CollectionModel<EntityModel<BranchDto>>> getAllBrunchesDto()
     {
@@ -68,6 +84,11 @@ public class BranchesController
                                 .collect(Collectors.toList())));
     }
 
+    /**
+     * function which handle get request got receiving single DTO branch
+     * @param id  - represents id of the requested branch in DB
+     * @return return Entity model of requested branch as DTO branch
+     */
     @GetMapping("/branches/{id}/info")
     public ResponseEntity<EntityModel<BranchDto>> getBrunchDto(@PathVariable String id)
     {
@@ -78,6 +99,12 @@ public class BranchesController
                 .orElseThrow(() -> new BranchNotFoundException(id));
     }
 
+    /**
+     * function that handle Get request for getting  branch by given branch name (as DTO)
+     * @param branchName - name of requested branch
+     * @return requested branch that fits to given branch name as entity model of branch DTO
+     *  or throws BranchNotFoundException if can't find such branch
+     */
     @GetMapping("/branches/getByName")
     public ResponseEntity<EntityModel<BranchDto>> getBrunchByName(@RequestParam String branchName)
     {
@@ -89,11 +116,16 @@ public class BranchesController
                 .orElseThrow(() -> new BranchNotFoundException());
     }
 
+    /**
+     * function that handle Put request for adding employee to branch
+     * @param employeeToAddId id of requested employee
+     * @param branchId  id of the requested branch
+     * @return updated branch after adding employee
+     */
     @PutMapping("/branches/updatedEmployees/add")
     public ResponseEntity<EntityModel<BranchDto>> addEmployeeToBranch(@RequestParam String employeeToAddId,
                                                                       @RequestParam String branchId)
     {
-//        System.out.println(employeeToAddId);
         branchService.addExistingEmployeeToBranch(employeeToAddId, branchId);
 
         // find and return the updated branch
@@ -103,6 +135,12 @@ public class BranchesController
 
     }
 
+    /**
+     * function that handle Put request for removing employee from branch
+     * @param employeeRemoveId id of requested employee
+     * @param branchId id of the requested branch
+     * @return updated branch after removing employee
+     */
     @PutMapping("/branches/updatedEmployees/remove")
     public ResponseEntity<EntityModel<BranchDto>> removeEmployeeFromBranch(@RequestParam String employeeRemoveId,
                                                                            @RequestParam String branchId)
@@ -114,11 +152,17 @@ public class BranchesController
                 .map(ResponseEntity::ok).orElseThrow(() -> new BranchNotFoundException());
     }
 
+    /**
+     * function that handle Post request for creating new  branch
+     * @param newBranch new brunch to create and save into DB
+     * @return  created branch
+     */
     @PostMapping("/branches")
     public ResponseEntity<EntityModel<Branch>> createBranch(@RequestBody Branch newBranch)
     {
-        System.out.println(newBranch);
+//        System.out.println(newBranch);
         newBranch.setEmployeesIds(new ArrayList<>());
+        // saving new branch into DB
         Branch savedBranch = brunchRepository.save(newBranch);
 
         return ResponseEntity.created(linkTo(methodOn(BranchesController.class)
@@ -126,11 +170,19 @@ public class BranchesController
                 .body(brunchAssembler.toModel(savedBranch));
     }
 
+    /**
+     * function that handle delete request for removing  branch
+     * @param id of branch to delete
+     * @return deleted branch
+     */
     @DeleteMapping("/branches/{id}")
     public ResponseEntity<?> deleteBranch(@PathVariable String id)
     {
+        // find the requested branch or throw  NOT FOUNT  exception
         Branch branchToDelete = brunchRepository.findById(id)
                 .orElseThrow(() -> new BranchNotFoundException(id));
+
+        // performs the removing logic
         boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);
         EntityModel<Branch> branchEntityModel = brunchAssembler.toModel(branchToDelete);
 

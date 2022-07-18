@@ -11,6 +11,9 @@ import com.example.barmanager.backend.repositories.CustomBrunchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import com.example.barmanager.backend.service.EmployeeService;
+import org.apache.juli.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -34,6 +37,7 @@ public class EmployeesController
     private final IEmployeeRepository employeeRepository;
     private final IBrunchRepository brunchRepository;
     private final CustomBrunchRepository customBrunchRepository;
+    private final Logger logger;
 
     @Autowired private EmployeeService employeeService;
 
@@ -48,6 +52,7 @@ public class EmployeesController
         this.employeeRepository = employeeRepository;
         this.brunchRepository = brunchRepository;
         this.customBrunchRepository = customBrunchRepository;
+        logger = LoggerFactory.getLogger(EmployeesController.class);
     }
 
     /**
@@ -129,27 +134,25 @@ public class EmployeesController
 
     /**
      * function which handle Get req and get employee not in the specific branch
-     * @param brunchId id of requested branch
+     * @param branchId id of requested branch
      * @return fitting employees as collection model of entity model of employee as dtos
      */
     @GetMapping("employees/filterByBranch")
     public ResponseEntity<CollectionModel<EntityModel<EmployeeDto>>>
-    getEmployeesNotInBranch(@RequestParam String brunchId){
+    getEmployeesNotInBranch(@RequestParam String branchId){
 
-        Branch brunch = brunchRepository.findById(brunchId)
-                .orElseThrow(()-> new BranchNotFoundException(brunchId));
+        Branch brunch = brunchRepository.findById(branchId)
+                .orElseThrow(()-> new BranchNotFoundException(branchId));
 
-        List<Employee> fittingEmployees = employeeRepository.findAll()
-                .stream().filter(employee -> !employee.getBranches().contains(brunch))
-                .collect(Collectors.toList());
+        List<Employee> fittingEmployees = employeeService.getEmployeesNotInBranch(brunch);
         return ResponseEntity.ok(
                 employeeDtoAssembler.toCollectionModel(
                         StreamSupport.stream(fittingEmployees.spliterator(),
                                         false)
                                 .map(EmployeeDto::new)
                                 .collect(Collectors.toList())));
-
     }
+
 
     /**
      * function which handle Get req and get employee  in the specific branch
@@ -210,16 +213,19 @@ public class EmployeesController
      * @param id of requested employee to be deleted
      */
     @DeleteMapping("employees/{id}")
-    public void deleteEmployee(@PathVariable String id){
+    public ResponseEntity<?> deleteEmployee(@PathVariable String id){
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
-        System.out.println(employee.getBranches());
+
+
         for ( Branch branch : employee.getBranches() )
         {
             customBrunchRepository.deleteEmployee(branch, id);
         }
+
         employeeRepository.delete(employee);
 
+        return ResponseEntity.noContent().build();
     }
 
 }

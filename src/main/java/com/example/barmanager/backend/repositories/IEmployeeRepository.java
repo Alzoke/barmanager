@@ -8,6 +8,11 @@ import java.util.List;
 
 public interface IEmployeeRepository extends MongoRepository<Employee,String>
 {
-    List<Employee> findByBranchesContains(Branch brunch);
+    /**
+     * find all employees inside given Branch
+     * @param branch
+     * @return return fitting employees
+     */
+    List<Employee> findByBranchesContains(Branch branch);
 
 }

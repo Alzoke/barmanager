@@ -1,4 +1,5 @@
 package com.example.barmanager.backend.repositories;
+
 import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.*;
 import com.mongodb.client.result.DeleteResult;
@@ -13,8 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * class that implements  ICustomerRepository
- * contains custom quires and function that works with the DB
+ * class that implements   ICustomBrunchRepository
+ * contains custom quires and functions that works with the DB
  */
 @Component
 public class CustomBrunchRepository implements ICustomBrunchRepository
@@ -27,7 +28,8 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     /**
      * custom function that insert employee to brunch and make branch contain this employee
      * many-to-many relationship
-     * @param brunch where employee should be inserted
+     *
+     * @param brunch   where employee should be inserted
      * @param employee to be inserted into branch
      */
     @Override
@@ -35,13 +37,13 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     {
         // first direction (brunch -> employee)
         employee.getBranches().add(brunch);
-        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+        UpdateResult updateResultBrunch = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(brunch.getId()))
                 .apply(new Update().push("employeesIds", employee.getId())).first();
         System.out.println(updateResultBrunch);
 
         // second direction (employee -> brunch)
-        UpdateResult  updateResultEmployee = mongoTemplate.update(Employee.class)
+        UpdateResult updateResultEmployee = mongoTemplate.update(Employee.class)
                 .matching(Criteria.where("_id").is(employee.getId()))
                 .apply(new Update().push("branches", brunch)).first();
         System.out.println(updateResultEmployee);
@@ -51,13 +53,14 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 
     /**
      * function that insert order to specific branch
+     *
      * @param brunch
      * @param order
      */
     @Override
     public void addOrder(Branch brunch, Order order)
     {
-        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+        UpdateResult updateResultBrunch = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(brunch.getId()))
                 .apply(new Update().push("orders", order)).first();
         System.out.println(updateResultBrunch);
@@ -65,7 +68,8 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 
     /**
      * function that remove from DB employee from specific branch
-     * @param branch to remove from
+     *
+     * @param branch   to remove from
      * @param employee to be removed
      */
     @Override
@@ -82,20 +86,23 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         branch.getEmployeesIds().remove(employee.getId());
 //        System.out.println(branches);
         // first direction (brunch -> employee)
-        UpdateResult  updateResultBrunch = mongoTemplate.update(Branch.class)
+        UpdateResult updateResultBrunch = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(branch.getId()))
                 .apply(new Update().set("employeesIds", branch.getEmployeesIds())).first();
         System.out.println(updateResultBrunch);
 
         // second direction (employee -> brunch)
-        UpdateResult  updateResultEmployee = mongoTemplate.update(Employee.class)
+        UpdateResult updateResultEmployee = mongoTemplate.update(Employee.class)
                 .matching(Criteria.where("_id").is(employee.getId()))
                 .apply(new Update().set("branches", employee.getBranches())).first();
         System.out.println(updateResultEmployee);
+
+
     }
 
     /**
      * function which responsible for updating employee in DB
+     *
      * @param employee
      * @return
      */
@@ -103,11 +110,11 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     public Employee updateEmployee(Employee employee)
     {
         Update update = new Update();
-        update.set("salaryPerHour",employee.getSalaryPerHour());
-        update.set("idNumber",employee.getIdNumber());
-        update.set("firstName",employee.getFirstName());
+        update.set("salaryPerHour", employee.getSalaryPerHour());
+        update.set("idNumber", employee.getIdNumber());
+        update.set("firstName", employee.getFirstName());
         update.set("lastName", employee.getLastName());
-        update.set("branches",employee.getBranches());
+        update.set("branches", employee.getBranches());
         UpdateResult updateResult = mongoTemplate.update(Employee.class)
                 .matching(Criteria.where("_id").is(employee.getId()))
                 .apply(update).first();
@@ -117,12 +124,13 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
 
     /**
      * function which responsible for removing employee from DB
+     *
      * @param branch
      * @param employeeIdToRemove
      * @return
      */
     @Override
-    public boolean deleteEmployee(Branch branch,String employeeIdToRemove)
+    public boolean deleteEmployee(Branch branch, String employeeIdToRemove)
     {
         List<String> employeesIds = branch.getEmployeesIds();
         List<String> updatedEmployees = employeesIds.stream().filter(id ->
@@ -136,12 +144,13 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         System.out.println(first);
 
         // return true if deletion succeeded
-        return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
+        return first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
     }
 
     /**
      * function which responsible for removing branch from DB
+     *
      * @param branch to be removed
      * @return boolean that indicates is deleted or not
      */

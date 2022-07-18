@@ -23,7 +23,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
-
+/**
+ * class that implements  ICustomOrderRepository
+ * contains custom quires and functions that works with the DB
+ */
 @Component
 public class CustomOrderRepository implements ICustomOrderRepository
 {
@@ -38,7 +41,11 @@ public class CustomOrderRepository implements ICustomOrderRepository
     @Autowired
     private CustomerService customerService;
 
-
+    /**
+     * saves new order into DB
+     * @param order to be saved
+     * @return saved order
+     */
     @Override
     public Order saveNewOrder(Order order)
     {
@@ -58,12 +65,17 @@ public class CustomOrderRepository implements ICustomOrderRepository
                 .apply(new Update().push("orders",order)).first();*/
 
 
-        System.out.println(customerUpdateResult);
-        System.out.println(OrderUpdateResult);
+        logger.info(customerUpdateResult.toString());
+        logger.info(OrderUpdateResult.toString());
 
         return savedOrder;
     }
 
+    /**
+     * delete order form DB
+     * @param order to be deleted
+     * @return boolean indicates if order was deleted
+     */
     @Override
     public boolean deleteOrder(Order order)
     {
@@ -87,6 +99,11 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
     }
 
+    /**
+     * update order and change her status to "Close"
+     * @param order to be closes
+     * @return closes order
+     */
     @Override
     public Order closeOrder(Order order)
     {
@@ -110,6 +127,11 @@ public class CustomOrderRepository implements ICustomOrderRepository
         return updatedOrder;
     }
 
+    /**
+     * checks whether seat has and open order (and the seats is taken)
+     * @param seatNumber to be checked
+     * @return optional order
+     */
     @Override
     public Optional<Order> findCloseBySeat(int seatNumber)
     {
@@ -126,6 +148,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
         return Optional.of(orders.get(0));
     }
 
+/*
     public Optional<List<Order>> findOpenByBranch(Branch branch)
     {
         Query query = new Query();
@@ -140,18 +163,25 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
         return Optional.of(orders);
     }
+*/
 
-
+    /**
+     * find and return the most (10) ordered drinks
+     * @return the most (10) ordered drinks
+     */
     @Override
     public List<Document> getTenMostOrderedDrinks() {
         UnwindOperation unwindOperation = unwind("orderedDrinks");
         GroupOperation groupOperation = group("orderedDrinks").count().as("result");
         SortOperation sortOperation = sort(Sort.by(Sort.Direction.DESC, "result"));
-        ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
+        ProjectionOperation projectionOperation = project().andExpression("orderedDrinks")
+                .as("drink id")
                 .andExpression("result").as("result");
         LimitOperation limitOperation = limit(10);
-        Aggregation aggregation = newAggregation(unwindOperation, groupOperation, sortOperation, projectionOperation, limitOperation);
-        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
+        Aggregation aggregation = newAggregation(unwindOperation, groupOperation, sortOperation,
+                projectionOperation, limitOperation);
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class,
+                Document.class);
         for (Document document :results.getMappedResults()) {
             document.put("_id", document.get("_id").toString());
         }
@@ -170,7 +200,6 @@ public class CustomOrderRepository implements ICustomOrderRepository
         ProjectionOperation projectionOperation = project().andExpression("month").as("month")
                 .andExpression("result").as("result");
         Aggregation aggregation = newAggregation( projectDateAsMonthAndYear,matchOperation,groupOperation, sortOperation,projectionOperation);
-        System.out.println(aggregation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
 
         return results.getMappedResults();

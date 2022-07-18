@@ -27,7 +27,8 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
                 project("result").and("category"));
 
 
-        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, BarDrink.class, Document.class);
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation,
+                BarDrink.class, Document.class);
 
         return results.getMappedResults();
     }
@@ -61,14 +62,5 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
                 Document.class);
         return results.getMappedResults();
     }
-//
-//    UnwindOperation unwindOperation = unwind("orderedDrinks");
-//    GroupOperation groupOperation = group("orderedDrinks").count().as("count");
-//    ProjectionOperation projectionOperation = project().andExpression("orderedDrinks").as("drink id")
-//            .andExpression("count").as("count");
-//    Aggregation aggregation = newAggregation(unwindOperation, groupOperation, projectionOperation);
-//    AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
-//
-//        return results.getMappedResults();
 
 }

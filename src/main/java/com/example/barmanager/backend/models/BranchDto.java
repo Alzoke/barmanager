@@ -22,7 +22,7 @@ public class BranchDto
         return String.format("%s", branch.getBranchName());
     }
 
-    public String getBrunchId()
+    public String getBranchId()
     {
         return branch.getId();
     }

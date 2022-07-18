@@ -91,9 +91,11 @@ public class InventoryController {
         return ResponseEntity.ok(drinkEntity);
     }
 
+
     @PutMapping("/inventory/{id}")
     public ResponseEntity<EntityModel<BarDrink>> updateDrink(@PathVariable String id, @RequestBody BarDrink body){
        return ResponseEntity.ok(barDrinkAssembler.toModel(inventoryRepo.updateDrink(id, body)));
+       // TODO ::
     }
 
     @GetMapping("/inventory/filterByCategory")

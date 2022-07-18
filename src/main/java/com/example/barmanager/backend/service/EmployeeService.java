@@ -8,7 +8,9 @@ import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService
@@ -22,6 +24,19 @@ public class EmployeeService
         this.customBrunchRepository = customBrunchRepository;
         this.brunchRepository = brunchRepository;
         this.employeeRepository = employeeRepository;
+    }
+    /**
+     * function that return employee that not belongs to given branch
+     * @param brunch
+     * @return List of fitting employee
+     */
+    public List<Employee> getEmployeesNotInBranch(Branch brunch)
+    {
+        List<Employee> fittingEmployees = employeeRepository.findAll()
+                .stream().filter(employee -> !employee.getBranches().contains(brunch))
+                .collect(Collectors.toList());
+        return fittingEmployees;
+
     }
 
     /**
@@ -67,5 +82,7 @@ public class EmployeeService
         return Optional.ofNullable(savedEmployee);
 
     }
+
+
 
 }

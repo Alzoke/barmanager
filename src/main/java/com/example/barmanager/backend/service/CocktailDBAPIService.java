@@ -150,11 +150,9 @@ public class CocktailDBAPIService {
         List<ApiDrink> apiDrinks = new ArrayList<>();
         try {
             List<String> categories = fetchDrinkCategories().get();
-            for (String ingredient : categories) {
-                List<ApiDrink> drinkList = fetchDrinksListByCategory(ingredient).get();
-                for (ApiDrink drink : drinkList){
-                    apiDrinks.add(drink);
-                }
+            for (String category : categories) {
+                List<ApiDrink> drinkList = fetchDrinksListByCategory(category).get();
+                apiDrinks.addAll(drinkList);
             }
 
             return CompletableFuture.completedFuture(apiDrinks);

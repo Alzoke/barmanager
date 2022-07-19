@@ -5,7 +5,7 @@ import com.example.barmanager.backend.models.BarDrink;
 import org.springframework.stereotype.Service;
 
 @Service
-public class InventorService
+public class InventoryService
 {
     public boolean newDrinkValidation(BarDrink barDrink)
     {

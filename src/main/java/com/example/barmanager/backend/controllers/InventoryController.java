@@ -5,7 +5,7 @@ import com.example.barmanager.backend.exceptions.DrinkNotFoundException;
 import com.example.barmanager.backend.models.BarDrink;
 import com.example.barmanager.backend.repositories.ICustomInventoryRepository;
 import com.example.barmanager.backend.repositories.InventoryRepo;
-import com.example.barmanager.backend.service.InventorService;
+import com.example.barmanager.backend.service.InventoryService;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +26,11 @@ public class InventoryController {
     private final InventoryRepo inventoryRepo;
     private final ICustomInventoryRepository customInventoryRepository;
     private final BarDrinkAssembler barDrinkAssembler;
-    private final InventorService inventorService;
+    private final InventoryService inventorService;
     private final Logger logger;
 
 
-    public InventoryController(InventoryRepo barDrinkRepo, ICustomInventoryRepository customInventoryRepository, BarDrinkAssembler barDrinkAssembler, InventorService inventorService) {
+    public InventoryController(InventoryRepo barDrinkRepo, ICustomInventoryRepository customInventoryRepository, BarDrinkAssembler barDrinkAssembler, InventoryService inventorService) {
         this.inventoryRepo = barDrinkRepo;
         this.customInventoryRepository = customInventoryRepository;
         this.barDrinkAssembler = barDrinkAssembler;

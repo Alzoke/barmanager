@@ -17,6 +17,11 @@ public class CustomerService
         this.customerRepository = customerRepository;
     }
 
+    /**
+     * find customer by his id number;
+     * @param idNumber to find customer by
+     * @return  Customer
+     */
     public Customer findCustomerByIdNumber(int idNumber)
     {
         Customer customer = customerRepository.findByIdNumber(idNumber)

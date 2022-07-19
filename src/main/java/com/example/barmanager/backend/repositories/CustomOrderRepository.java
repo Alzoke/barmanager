@@ -199,7 +199,8 @@ public class CustomOrderRepository implements ICustomOrderRepository
         SortOperation sortOperation = sort(Sort.by(Sort.Direction.ASC, "_id"));
         ProjectionOperation projectionOperation = project().andExpression("month").as("month")
                 .andExpression("result").as("result");
-        Aggregation aggregation = newAggregation( projectDateAsMonthAndYear,matchOperation,groupOperation, sortOperation,projectionOperation);
+        Aggregation aggregation = newAggregation( projectDateAsMonthAndYear,matchOperation,groupOperation,
+                sortOperation,projectionOperation);
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, Order.class, Document.class);
 
         return results.getMappedResults();

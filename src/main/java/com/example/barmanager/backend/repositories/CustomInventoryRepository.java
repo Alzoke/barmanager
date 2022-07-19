@@ -33,8 +33,6 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
         return results.getMappedResults();
     }
 
-
-
     @Override
     public Iterable<? extends BarDrink> getFilteredByMultipleParams(Optional<String> category,
                                                                     Optional<String> ingredient,
@@ -54,7 +52,8 @@ public class CustomInventoryRepository implements ICustomInventoryRepository{
     public List<Document> getIngredientCount() {
         UnwindOperation unwindOperation = unwind("ingredients");
         GroupOperation groupOperation = group("ingredients").count().as("result");
-        ProjectionOperation projectionOperation = project().andExpression("ingredients").as("ingredient name")
+        ProjectionOperation projectionOperation = project().andExpression("ingredients")
+                .as("ingredient name")
                 .andExpression("result").as("result");
         AggregationResults<Document> results = mongoTemplate.aggregate(
                 newAggregation(unwindOperation, groupOperation, projectionOperation),

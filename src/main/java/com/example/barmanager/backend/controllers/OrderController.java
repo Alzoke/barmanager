@@ -194,9 +194,9 @@ public class OrderController
 
     /**
      * Get handler for getting an (open or close) order (if exists) that belongs to given seat number
-     *  @param seatNumber requestes seat number
+     *  @param seatNumber requests seat number
      * @param orderStatus
-     * @return
+     * @return ResponseEntity.OK and an Entity Model of fitting orderDto
      */
     @GetMapping("/orders/closeBySeat")
     public ResponseEntity<EntityModel<OrderDto>> findByStatusAndBySeat(
@@ -211,9 +211,10 @@ public class OrderController
     }
 
     /**
+     *Handles Put request for updating order status to - close,
+     * @param id of requested order
+     * @return ResponseEntity.created and an Entity Model of the updated order,
      *
-     * @param id
-     * @return
      */
     @PutMapping("/orders/{id}")
     public ResponseEntity<?> setOrderStatusToClose(@PathVariable String id)
@@ -227,6 +228,13 @@ public class OrderController
                 .toUri()).body(orderEntityModel);
     }
 
+    /**
+     * handles Delete request for deleting order from DB
+     * @param id of requested order
+     * @return ResponseEntity with status code - ok if no error occurred,
+     * or ResponseEntity with status code -bad request
+     *  wraps entity model of the deleted order.
+     */
     @DeleteMapping("/orders/{id}")
     public ResponseEntity<EntityModel<Order>> deleteOrder(@PathVariable String id){
 

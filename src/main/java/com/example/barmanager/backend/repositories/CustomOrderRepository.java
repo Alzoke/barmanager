@@ -94,6 +94,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
 
 
         logger.info("removing: " + mongoTemplate.remove(order));
+
         // return true if deletion succeeded
         return  first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
 
@@ -102,7 +103,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
     /**
      * update order and change her status to "Close"
      * @param order to be closes
-     * @return closes order
+     * @return updated order
      */
     @Override
     public Order closeOrder(Order order)
@@ -121,6 +122,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
                 .apply(update).first();
 
         logger.info(updateResult.toString());
+
         Order updatedOrder = orderRepository.findById(order.getOrderId()).orElseThrow(() ->
                 new OrderNotFoundException(order.getOrderId()));
 
@@ -128,7 +130,7 @@ public class CustomOrderRepository implements ICustomOrderRepository
     }
 
     /**
-     * checks whether seat has and open order (and the seats is taken)
+     * checks whether seat has an open order (the seats is taken)
      * @param seatNumber to be checked
      * @return optional order
      */
@@ -139,12 +141,14 @@ public class CustomOrderRepository implements ICustomOrderRepository
         query.addCriteria(Criteria.where("seatNumber").is(seatNumber));
         query.addCriteria(Criteria.where("orderStatus").is(eOrderStatus.Open));
         List<Order> orders = mongoTemplate.find(query, Order.class);
-//        logger.info(String.valueOf(orders.get(0).getOrderedDrinks().size()));
+
         if ( orders.isEmpty() )
         {
             return Optional.of(new Order());
         }
-
+        /* orders.get(0) -> Because at a time there can be at most one
+         open order in  the seat
+        */
         return Optional.of(orders.get(0));
     }
 

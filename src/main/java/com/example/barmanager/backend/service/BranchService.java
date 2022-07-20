@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BranchService
 {
-    private final IBrunchRepository brunchRepository;
+    private final IBrunchRepository branchRepository;
     private final CustomBrunchRepository customBrunchRepository;
     private final IEmployeeRepository employeeRepository;
 
@@ -20,7 +20,7 @@ public class BranchService
                          CustomBrunchRepository customBrunchRepository,
                          IEmployeeRepository employeeRepository)
     {
-        this.brunchRepository = brunchRepository;
+        this.branchRepository = brunchRepository;
         this.customBrunchRepository = customBrunchRepository;
         this.employeeRepository = employeeRepository;
     }
@@ -34,7 +34,7 @@ public class BranchService
     {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
-        Branch branch = brunchRepository.findById(branchId)
+        Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new BranchNotFoundException(branchId));
 
         customBrunchRepository.addEmployee(branch,employee);
@@ -50,11 +50,26 @@ public class BranchService
     {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
-        Branch branch = brunchRepository.findById(branchId)
+        Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new BranchNotFoundException(branchId));
 
         customBrunchRepository.removeEmployee(branch,employee);
 
+    }
+
+    public Branch findBranchById(String id)
+    {
+        Branch branch = branchRepository.findById(id)
+                .orElseThrow(() -> new BranchNotFoundException(id));
+
+        return branch;
+    }
+
+    public Branch saveBranchToDB(Branch branch)
+    {
+        Branch savedBranch = branchRepository.save(branch);
+
+        return savedBranch;
     }
 
 }

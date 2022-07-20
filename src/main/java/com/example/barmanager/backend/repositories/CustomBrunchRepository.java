@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * class that implements   ICustomBrunchRepository
- * contains custom quires and functions that works with the DB
+ * contains utilities quires and functions to easy work with the DB
+ *   and enable complicate work with the DB
  */
 @Component
 public class CustomBrunchRepository implements ICustomBrunchRepository
@@ -33,7 +33,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
      * many-to-many relationship
      *
      * @param brunch   where employee should be inserted
-     * @param employee to be inserted into branch
+     * @param employee to be inserted
      */
     @Override
     public void addEmployee(Branch brunch, Employee employee)
@@ -72,7 +72,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     /**
      * function that remove employee from DB from specific branch
      *
-     * @param branch   to remove from
+     * @param branch  to remove from
      * @param employee to be removed
      */
     @Override
@@ -102,10 +102,10 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     }
 
     /**
-     * function which responsible for updating employee in DB
-     *
-     * @param employee
-     * @return
+     * function that responsible to
+     * updating employee data in the DB
+     * @param employee to be updated
+     * @return the updated employee
      */
     @Override
     public Employee updateEmployee(Employee employee)
@@ -125,14 +125,16 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     }
 
     /**
-     * function which responsible for removing employee from DB
-     * @param branch
-     * @param employeeIdToRemove
-     * @return
+     * function which responsible to pop out employee
+     * from given branch
+     * @param branch requested branch
+     * @param employeeIdToRemove id of the requested employee
+     *  @return boolean indicate whether the action succeeded or not
      */
     @Override
     public boolean deleteEmployee(Branch branch, String employeeIdToRemove)
     {
+        // first direction -> removing employee from current employees in the given branch
         List<String> employeesIds = branch.getEmployeesIds();
         List<String> updatedEmployees = employeesIds.stream().filter(id ->
                         !id.equals(employeeIdToRemove))
@@ -142,7 +144,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
         UpdateResult first = mongoTemplate.update(Branch.class)
                 .matching(Criteria.where("_id").is(branch.getId()))
                 .apply(new Update().set("employeesIds", updatedEmployees)).first();
-        logger.info(String.valueOf("Delete result: " + first));
+        logger.info("result: " + first);
 
         // return true if deletion succeeded
         return first.getMatchedCount() > 0 && first.getModifiedCount() > 0;
@@ -153,7 +155,7 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
      * function which responsible for removing branch from DB
      *
      * @param branch to be removed
-     * @return boolean that indicates is deleted or not
+     * @return boolean that indicates if deleted or not
      */
     @Override
     public boolean removeBranch(Branch branch)

@@ -27,6 +27,11 @@ import java.util.stream.StreamSupport;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Controller which is responsible for managing
+ * and routing http requests for the Order route
+ */
+
 @RestController
 public class OrderController
 {
@@ -172,18 +177,18 @@ public class OrderController
      * @return collection model of entity model of Orders with
      */
     @GetMapping("/orders/filterByOrderDate")
-    public ResponseEntity<CollectionModel<EntityModel<Order>>> filterByDateRange
+    public ResponseEntity<CollectionModel<EntityModel<OrderDto>>> filterByDateRange
             (@RequestParam Optional<String> sDate, @RequestParam Optional<String> eDate)
     {
-   /*     LocalDate startDate = LocalDate.parse(sDate.orElseGet(() -> String.valueOf(LocalDate.now())));
-        LocalDate endDate = LocalDate.parse(eDate.orElseGet(() ->
-                        String.valueOf(LocalDate.now().minusDays(1))))
-                .plusDays(1);*/
         String startDate = sDate.orElseGet(() -> String.valueOf(LocalDate.now()));
-        // minusDays(1) -> because LocalDate return day starting in 1 till 31
+        // minusDays(1) -> because LocalDate return day starting in 1
         String endDate = eDate.orElseGet(() -> String.valueOf(LocalDate.now().minusDays(1)));
-        return ResponseEntity.ok(orderAssembler
-                .toCollectionModel(orderService.getOrderBetweenDates(startDate,endDate)));
+
+        List<OrderDto> orderBetweenDates = orderService.getOrderBetweenDates(startDate, endDate);
+        logger.info("orderBetweenDates" + orderBetweenDates);
+
+        return ResponseEntity.ok(orderDtoAssembler
+                .toCollectionModel(orderBetweenDates));
 //                .toCollectionModel(orderRepository.findByOrderDateBetween(startDate,endDate)));
     }
 

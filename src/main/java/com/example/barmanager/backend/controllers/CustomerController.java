@@ -22,6 +22,9 @@ import java.util.stream.StreamSupport;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * class which represents Customer Controller;
+ */
 @RestController
 public class CustomerController
 {
@@ -73,7 +76,7 @@ public class CustomerController
     /**
      * function that handle Post request for creating new  customer
      * @param newCustomer new customer to create and save into db
-     * @return created customer
+     * @return created customer as entity model
      */
     @PostMapping("/customers")
     ResponseEntity<EntityModel<Customer>> createCustomer(@RequestBody Customer newCustomer)

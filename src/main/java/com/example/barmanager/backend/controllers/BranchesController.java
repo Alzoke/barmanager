@@ -163,7 +163,8 @@ public class BranchesController
 //        System.out.println(newBranch);
         newBranch.setEmployeesIds(new ArrayList<>());
         // saving new branch into DB
-        Branch savedBranch = brunchRepository.save(newBranch);
+        Branch savedBranch = branchService.saveBranchToDB(newBranch);
+//        Branch /savedBranch = brunchRepository.save(newBranch);
 
         return ResponseEntity.created(linkTo(methodOn(BranchesController.class)
                         .getBrunch(savedBranch.getId())).toUri())
@@ -179,8 +180,9 @@ public class BranchesController
     public ResponseEntity<?> deleteBranch(@PathVariable String id)
     {
         // find the requested branch or throw  NOT FOUNT  exception
-        Branch branchToDelete = brunchRepository.findById(id)
-                .orElseThrow(() -> new BranchNotFoundException(id));
+        Branch branchToDelete = branchService.findBranchById(id);
+       /* Branch branchToDelete = brunchRepository.findById(id)
+                .orElseThrow(() -> new BranchNotFoundException(id));*/
 
         // performs the removing logic
         boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);

@@ -20,6 +20,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller which is responsible for managing
+ * and routing http requests for the inventory path
+ */
 @RestController
 public class InventoryController {
 

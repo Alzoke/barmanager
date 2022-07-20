@@ -22,7 +22,7 @@ import java.util.Optional;
 
 /**
  * Controller which is responsible for managing
- * and routing http requests for the inventory path
+ * and routing http requests for the inventory route
  */
 @RestController
 public class InventoryController {

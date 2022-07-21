@@ -7,7 +7,7 @@ import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.BranchDto;
 import com.example.barmanager.backend.models.Employee;
-import com.example.barmanager.backend.repositories.CustomBrunchRepository;
+import com.example.barmanager.backend.repositories.CustomBranchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import com.example.barmanager.backend.service.BranchService;
@@ -37,18 +37,18 @@ public class BranchesController {
     private final BranchDtoAssembler branchDtoAssembler;
     private final IBrunchRepository branchRepository;
     private final BranchService branchService;
-    private final CustomBrunchRepository customBrunchRepository;
+    private final CustomBranchRepository customBranchRepository;
     private final IEmployeeRepository employeeRepository;
 
     public BranchesController(BranchAssembler brunchAssembler,
                               BranchDtoAssembler brunchDtoAssembler,
                               IBrunchRepository brunchRepository, BranchService branchService,
-                              CustomBrunchRepository customBrunchRepository, IEmployeeRepository employeeRepository) {
+                              CustomBranchRepository customBranchRepository, IEmployeeRepository employeeRepository) {
         this.brunchAssembler = brunchAssembler;
         this.branchDtoAssembler = brunchDtoAssembler;
         this.branchRepository = brunchRepository;
         this.branchService = branchService;
-        this.customBrunchRepository = customBrunchRepository;
+        this.customBranchRepository = customBranchRepository;
         this.employeeRepository = employeeRepository;
     }
 
@@ -136,7 +136,7 @@ public class BranchesController {
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new BranchNotFoundException(branchId));
 
-        customBrunchRepository.addEmployee(branch,employee);
+        customBranchRepository.addEmployee(branch,employee);
 
         // find and return the updated branch
         return branchRepository.findById(branchId).map(BranchDto::new).map(branchDtoAssembler::toModel)
@@ -167,7 +167,7 @@ public class BranchesController {
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new BranchNotFoundException(branchId));
 
-        customBrunchRepository.removeEmployee(branch,employee);
+        customBranchRepository.removeEmployee(branch,employee);
         // find and return the updated branch
         return branchRepository.findById(branchId).map(BranchDto::new).map(branchDtoAssembler::toModel)
                 .map(branchDto -> {
@@ -210,7 +210,7 @@ public class BranchesController {
         // find the requested branch or throw  BranchNotFoundException  exception
         Branch branchToDelete = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException(id));
         // performs the removing logic
-        boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);
+        boolean isDeleted = customBranchRepository.removeBranch(branchToDelete);
         EntityModel<Branch> branchEntityModel = brunchAssembler.toModel(branchToDelete);
 
         if (isDeleted) {

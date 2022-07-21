@@ -29,7 +29,7 @@ public class SeedDB implements CommandLineRunner{
     @Autowired
     private IEmployeeRepository employeeRepository;
     @Autowired
-    private CustomBrunchRepository customBrunchRepository;
+    private CustomBranchRepository customBranchRepository;
 
     public SeedDB(CocktailDBAPIService drinkService, InventoryRepo barDrinkRepo, ICustomerRepository customerRepository, CustomOrderRepository orderRepository) {
         this.drinkService = drinkService;
@@ -54,10 +54,10 @@ public class SeedDB implements CommandLineRunner{
         List<Employee> employees = employeeRepository.findAll();
         if ( employee != null )
         {
-            customBrunchRepository.addEmployee(branch,employee);
+            customBranchRepository.addEmployee(branch,employee);
         }
         else  if ( !employees.isEmpty() ){
-            customBrunchRepository.addEmployee(branch,employees.get(0));
+            customBranchRepository.addEmployee(branch,employees.get(0));
 
         }
         Branch updatedBranch = branchRepository.findById(branch.getId()).get();
@@ -77,13 +77,13 @@ public class SeedDB implements CommandLineRunner{
 
         if ( employee != null )
         {
-          customBrunchRepository.removeEmployee(branch, employee);
+            customBranchRepository.removeEmployee(branch, employee);
             logger.info("Employee branches:" + employee.getBranches().toString());
 
         }
         else {
             List<Employee> employees = employeeRepository.findAll();
-            customBrunchRepository.removeEmployee(branch,employees.get(0));
+            customBranchRepository.removeEmployee(branch,employees.get(0));
             logger.info("Employee branches:" + employees.get(0).toString());
 
         }

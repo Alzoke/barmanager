@@ -191,8 +191,7 @@ public class BranchesController {
     @DeleteMapping("/branches/{id}")
     public ResponseEntity<?> deleteBranch(@PathVariable String id) {
         // find the requested branch or throw  BranchNotFoundException  exception
-        Branch branchToDelete = branchService.findBranchById(id);
-
+        Branch branchToDelete = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException(id));
         // performs the removing logic
         boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);
         EntityModel<Branch> branchEntityModel = brunchAssembler.toModel(branchToDelete);

@@ -161,8 +161,13 @@ public class BranchesController {
     @PutMapping("/branches/updatedEmployees/remove")
     public ResponseEntity<?> removeEmployeeFromBranch(@RequestParam String employeeRemoveId,
                                                                            @RequestParam String branchId) {
-        branchService.removeExistingEmployeeToBranch(employeeRemoveId, branchId);
+//        branchService.removeExistingEmployeeToBranch(employeeRemoveId, branchId);
+        Employee employee = employeeRepository.findById(employeeRemoveId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeRemoveId));
+        Branch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new BranchNotFoundException(branchId));
 
+        customBrunchRepository.removeEmployee(branch,employee);
         // find and return the updated branch
         return branchRepository.findById(branchId).map(BranchDto::new).map(branchDtoAssembler::toModel)
                 .map(branchDto -> {

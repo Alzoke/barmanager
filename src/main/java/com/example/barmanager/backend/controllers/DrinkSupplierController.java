@@ -15,6 +15,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 
+/**
+ * Controller which is responsible for managing
+ * and routing http requests for the supplier route
+ */
 @RestController
 public class DrinkSupplierController {
     private final Logger logger;
@@ -202,5 +206,4 @@ public class DrinkSupplierController {
             return ResponseEntity.internalServerError().body("Something went wrong while retrieving a random drink");
         }
     }
-
 }

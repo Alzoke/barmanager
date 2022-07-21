@@ -43,7 +43,6 @@ public class Order {
     public Order() {
         orderStatus = eOrderStatus.Open;
         this.orderedDrinks = new ArrayList<>();
-
     }
 
     public void addDrinkToOrder(BarDrink barDrink) {

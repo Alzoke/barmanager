@@ -3,10 +3,13 @@ package com.example.barmanager.backend.controllers;
 import com.example.barmanager.backend.assemblers.BranchAssembler;
 import com.example.barmanager.backend.assemblers.BranchDtoAssembler;
 import com.example.barmanager.backend.exceptions.BranchNotFoundException;
+import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.BranchDto;
+import com.example.barmanager.backend.models.Employee;
 import com.example.barmanager.backend.repositories.CustomBrunchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
+import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import com.example.barmanager.backend.service.BranchService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -35,16 +38,18 @@ public class BranchesController {
     private final IBrunchRepository branchRepository;
     private final BranchService branchService;
     private final CustomBrunchRepository customBrunchRepository;
+    private final IEmployeeRepository employeeRepository;
 
     public BranchesController(BranchAssembler brunchAssembler,
                               BranchDtoAssembler brunchDtoAssembler,
                               IBrunchRepository brunchRepository, BranchService branchService,
-                              CustomBrunchRepository customBrunchRepository) {
+                              CustomBrunchRepository customBrunchRepository, IEmployeeRepository employeeRepository) {
         this.brunchAssembler = brunchAssembler;
         this.branchDtoAssembler = brunchDtoAssembler;
         this.branchRepository = brunchRepository;
         this.branchService = branchService;
         this.customBrunchRepository = customBrunchRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
@@ -125,7 +130,13 @@ public class BranchesController {
     @PutMapping("/branches/updatedEmployees/add")
     public ResponseEntity<?> addEmployeeToBranch(@RequestParam String employeeToAddId,
                                                                       @RequestParam String branchId) {
-        branchService.addExistingEmployeeToBranch(employeeToAddId, branchId);
+//        branchService.addExistingEmployeeToBranch(employeeToAddId, branchId);
+        Employee employee = employeeRepository.findById(employeeToAddId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeToAddId));
+        Branch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new BranchNotFoundException(branchId));
+
+        customBrunchRepository.addEmployee(branch,employee);
 
         // find and return the updated branch
         return branchRepository.findById(branchId).map(BranchDto::new).map(branchDtoAssembler::toModel)

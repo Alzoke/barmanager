@@ -2,13 +2,13 @@ package com.example.barmanager.backend.controllers;
 
 import com.example.barmanager.backend.assemblers.CustomerAssembler;
 import com.example.barmanager.backend.assemblers.CustomerDtoAssembler;
-import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.exceptions.CustomerNotFoundException;
-import com.example.barmanager.backend.models.BranchDto;
+import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.Customer;
 import com.example.barmanager.backend.models.CustomerDto;
-import com.example.barmanager.backend.repositories.ICustomOrderRepository;
+import com.example.barmanager.backend.models.Order;
 import com.example.barmanager.backend.repositories.ICustomerRepository;
+import com.example.barmanager.backend.repositories.IOrderRepository;
 import com.example.barmanager.backend.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class CustomerController {
     private final CustomerAssembler customerAssembler;
     private final CustomerDtoAssembler customerDtoAssembler;
     private final ICustomerRepository customerRepository;
-    private final ICustomOrderRepository customOrderRepository;
+    private final IOrderRepository orderRepository;
     private final CustomerService customerService;
     private final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
@@ -44,12 +44,11 @@ public class CustomerController {
     public CustomerController(CustomerAssembler customerAssembler,
                               CustomerDtoAssembler customerDtoAssembler,
                               ICustomerRepository customerRepository,
-                              ICustomOrderRepository customOrderRepository,
-                              CustomerService customerService) {
+                              IOrderRepository orderRepository, CustomerService customerService) {
         this.customerAssembler = customerAssembler;
         this.customerDtoAssembler = customerDtoAssembler;
         this.customerRepository = customerRepository;
-        this.customOrderRepository = customOrderRepository;
+        this.orderRepository = orderRepository;
         this.customerService = customerService;
     }
 

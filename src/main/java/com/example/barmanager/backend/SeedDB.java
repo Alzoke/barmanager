@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class SeedDB implements CommandLineRunner{
@@ -97,23 +99,66 @@ public class SeedDB implements CommandLineRunner{
 
         return savedEmployee;
     }
+    public Customer createNewCustomer(int idNumber,String fName,String lName)
+    {
+        Customer customer = new Customer(idNumber,fName,lName);
+        Customer savedCustomer = customerRepository.save(customer);
+        logger.info("saving new customer " + savedCustomer);
+        return savedCustomer;
+
+    }
+    public void createNewOrder(Customer customer)
+    {
+        Order order = new Order(customer);
+        List<BarDrink> allDrinks = barDrinkRepo.findAll();
+
+        // add some drinks to the order
+        for ( BarDrink barDrink : allDrinks.subList(2, 6) )
+        {
+            order.addDrinkToOrder(barDrink);
+        }
+        Order saveNewOrder = customOrderRepository.saveNewOrder(order);
+
+        logger.info("saving order " + saveNewOrder);
+
+
+    }
+    private void createRandomDates()
+    {
+        Customer customer = customerRepository.findAll().get(1);
+        int min = 2, max = 5;
+        // 2021
+        for ( int i = 0; i < 12; i++ )
+        {
+            int randomDay = (int) (Math.random() * (max - min + 1) + min);
+
+            LocalDate date = LocalDate.of(2020,i + 1,randomDay);
+//            System.out.println(date);
+            Order order = new Order(customer);
+            order.setOrderDate(date);
+            order.setOrderStatus(eOrderStatus.Close);
+            List<BarDrink> allDrinks = barDrinkRepo.findAll();
+
+            // add some drinks to the order
+            for ( BarDrink barDrink : allDrinks.subList(randomDay, 7) )
+            {
+                order.addDrinkToOrder(barDrink);
+            }
+            Order saveNewOrder = customOrderRepository.saveNewOrder(order);
+
+            logger.info("saving order " + saveNewOrder);
+
+        }
+
+    }
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Create new Brunch");
-        Branch newBranch = createNewBranch("test1", "country1", "city1");
-        System.out.println("add  employee to Brunch");
-        addEmployeeToBranch(newBranch, null);
-        System.out.println("remove employee from Brunch");
-        removeEmployeeFromBranch(newBranch,null);
 
-        System.out.println("create new employee");
-        Employee newEmployee = createEmployee(1111, "seed", "user", 50.5);
-        System.out.println("add new employee to Brunch");
-        addEmployeeToBranch(newBranch,newEmployee);
-        System.out.println("remove new employee from Brunch");
-        removeEmployeeFromBranch(newBranch,newEmployee);
-        //        Branch branch = new Branch("Jerusalem");
+//        executeSeed();
+
+//
+        //Branch branch = new Branch("Jerusalem");
 //        branchRepository.save(branch);
 //        Customer customer = customerRepository.findAll().get(0);
 //        Order order = orderRepository.findAll().get(0);
@@ -221,5 +266,30 @@ public class SeedDB implements CommandLineRunner{
 //        barDrinkRepo.save(barDrink1);
 //        barDrinkRepo.save(barDrink2);
 //        barDrinkRepo.save(barDrink3);
+    }
+
+    private void executeSeed() throws InterruptedException, ExecutionException
+    {
+        logger.info("Create new Brunch");
+        Branch newBranch = createNewBranch("test1", "country1", "city1");
+        logger.info("add  employee to Brunch");
+        addEmployeeToBranch(newBranch, null);
+        logger.info("remove employee from Brunch");
+        removeEmployeeFromBranch(newBranch,null);
+
+        logger.info("create new employee");
+        Employee newEmployee = createEmployee(1111, "seed", "user", 50.5);
+        logger.info("add new employee to Brunch");
+        addEmployeeToBranch(newBranch,newEmployee);
+        logger.info("remove new employee from Brunch");
+        removeEmployeeFromBranch(newBranch,newEmployee);
+        logger.info("----create new customer----");
+        Customer customer = createNewCustomer(00000,"customer","seedDB");
+        createNewOrder(customer);
+
+        //Seed drink category collection
+        CompletableFuture<List<String>> categoriesFuture = drinkService.fetchDrinkCategories();
+        List<String> drinkCategories = categoriesFuture.get();
+        logger.info(drinkCategories.toString());
     }
 }

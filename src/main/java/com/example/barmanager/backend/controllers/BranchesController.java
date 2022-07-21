@@ -175,7 +175,8 @@ public class BranchesController {
     public ResponseEntity<EntityModel<Branch>> createBranch(@RequestBody Branch newBranch) {
         newBranch.setEmployeesIds(new ArrayList<>());
         // saving new branch into DB
-        Branch savedBranch = branchService.saveBranchToDB(newBranch);
+        Branch savedBranch = branchRepository.save(newBranch);
+//        Branch savedBranch = branchService.saveBranchToDB(newBranch);
 
         return ResponseEntity.created(linkTo(methodOn(BranchesController.class)
                         .getBrunch(savedBranch.getId())).toUri())

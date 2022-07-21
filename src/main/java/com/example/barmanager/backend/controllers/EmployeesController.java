@@ -7,11 +7,10 @@ import com.example.barmanager.backend.exceptions.EmployeeNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
 import com.example.barmanager.backend.models.EmployeeDto;
-import com.example.barmanager.backend.repositories.CustomBrunchRepository;
+import com.example.barmanager.backend.repositories.CustomBranchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import com.example.barmanager.backend.service.EmployeeService;
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class EmployeesController {
     private final EmployeeDtoAssembler employeeDtoAssembler;
     private final IEmployeeRepository employeeRepository;
     private final IBrunchRepository brunchRepository;
-    private final CustomBrunchRepository customBrunchRepository;
+    private final CustomBranchRepository customBrunchRepository;
     private final Logger logger;
 
     @Autowired
@@ -49,7 +48,7 @@ public class EmployeesController {
                                EmployeeDtoAssembler employeeDtoAssembler,
                                IEmployeeRepository employeeRepository,
                                IBrunchRepository brunchRepository,
-                               CustomBrunchRepository customBrunchRepository) {
+                               CustomBranchRepository customBrunchRepository) {
         this.employeeAssembler = employeeAssembler;
         this.employeeDtoAssembler = employeeDtoAssembler;
         this.employeeRepository = employeeRepository;

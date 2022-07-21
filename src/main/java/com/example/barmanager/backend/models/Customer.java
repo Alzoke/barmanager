@@ -11,25 +11,22 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 @Document("customers")
-public class Customer extends Person
-{
-   @Id private String customerId;
+public class Customer extends Person {
+    @Id
+    private String customerId;
 
-   //   @DocumentReference
-   private ArrayList<String> ordersIds;
+    //   @DocumentReference
+    private ArrayList<String> ordersIds;
 
-   public Customer(int idNumber, String firstName, String lastName)
-   {
-      super(idNumber, firstName, lastName);
-      this.ordersIds = new ArrayList<>();
-   }
-
+    public Customer(int idNumber, String firstName, String lastName) {
+        super(idNumber, firstName, lastName);
+        this.ordersIds = new ArrayList<>();
+    }
 
 
-   @Override
-   public String toString()
-   {
-      return String.format("Customer: customerId: %s, name:%s, idNumber:%s",getCustomerId(),
-              getFirstName() +" " + getLastName(),getIdNumber());
-   }
+    @Override
+    public String toString() {
+        return String.format("Customer: customerId: %s, name:%s, idNumber:%s", getCustomerId(),
+                getFirstName() + " " + getLastName(), getIdNumber());
+    }
 }

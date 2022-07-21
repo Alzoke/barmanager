@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Update Utility Class which helps to update a target object with
+ * new fields from a source object only if they are not null.
+ * Credit to https://developpaper.com/solution-to-update-field-to-null-by-jpa-save-method/
+ */
 public class UpdateUtil {
     public static void copyNullProperties(Object source, Object target) {
         BeanUtils.copyProperties(source, target, getNullField(source));

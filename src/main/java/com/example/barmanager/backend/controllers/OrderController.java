@@ -6,7 +6,6 @@ import com.example.barmanager.backend.exceptions.OrderNotFoundException;
 import com.example.barmanager.backend.models.*;
 import com.example.barmanager.backend.repositories.*;
 import com.example.barmanager.backend.service.CustomerService;
-import com.example.barmanager.backend.service.EmployeeService;
 import com.example.barmanager.backend.service.OrderService;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -44,7 +43,7 @@ public class OrderController {
     @Autowired
     private CustomerService customerService;
     @Autowired
-    private CustomBrunchRepository customBrunchRepository;
+    private CustomBranchRepository customBrunchRepository;
 
     public OrderController(IOrderRepository orderRepository,
                            OrderAssembler orderAssembler,

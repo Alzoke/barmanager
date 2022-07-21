@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 @Data
 @Document("orders")
-public class Order
-{
-    @Id private String orderId;
+public class Order {
+    @Id
+    private String orderId;
 
     @DocumentReference
     private ArrayList<BarDrink> orderedDrinks;
@@ -26,15 +26,12 @@ public class Order
 /*    @DocumentReference
     Branch branch;*/
 
-    public double getBill()
-    {
-      return bill;
+    public double getBill() {
+        return bill;
     }
 
-    public void setBill()
-    {
-        for ( BarDrink barDrink : orderedDrinks )
-        {
+    public void setBill() {
+        for (BarDrink barDrink : orderedDrinks) {
             this.bill += barDrink.getPrice();
         }
 
@@ -43,20 +40,18 @@ public class Order
     @DocumentReference
     private Customer customer;
 
-    public Order()
-    {
+    public Order() {
         orderStatus = eOrderStatus.Open;
         this.orderedDrinks = new ArrayList<>();
 
     }
 
-    public void addDrinkToOrder(BarDrink barDrink)
-    {
+    public void addDrinkToOrder(BarDrink barDrink) {
         this.orderedDrinks.add(barDrink);
         this.setBill(getBill() + barDrink.getPrice());
     }
-    public Order(Customer customer)
-    {
+
+    public Order(Customer customer) {
         this();
         this.customer = customer;
         setBill();
@@ -64,8 +59,7 @@ public class Order
     }
 
 
-    public Order(Customer customer,LocalDate orderDate)
-    {
+    public Order(Customer customer, LocalDate orderDate) {
         this();
         this.customer = customer;
         this.orderDate = orderDate;

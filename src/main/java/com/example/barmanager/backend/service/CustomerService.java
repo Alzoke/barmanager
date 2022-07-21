@@ -8,22 +8,20 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CustomerService
-{
+public class CustomerService {
     private final ICustomerRepository customerRepository;
 
-    public CustomerService(ICustomerRepository customerRepository)
-    {
+    public CustomerService(ICustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     /**
      * find customer by his id number;
+     *
      * @param idNumber to find customer by
-     * @return  Customer
+     * @return Customer
      */
-    public Customer findCustomerByIdNumber(int idNumber)
-    {
+    public Customer findCustomerByIdNumber(int idNumber) {
         Customer customer = customerRepository.findByIdNumber(idNumber)
                 .orElseThrow(() -> new CustomerNotFoundException(idNumber + "Id number"));
 
@@ -32,14 +30,13 @@ public class CustomerService
 
     /**
      * function that delete customer iff he exists
+     *
      * @return the deleted customer
      */
-    public Customer deleteCustomer(String customerId)
-    {
+    public Customer deleteCustomer(String customerId) {
         Customer deletedCustomer = null;
 
-        if ( customerId != null )
-        {
+        if (customerId != null) {
             deletedCustomer = customerRepository.findById(customerId)
                     .orElseThrow(() -> new CustomerNotFoundException(customerId));
 

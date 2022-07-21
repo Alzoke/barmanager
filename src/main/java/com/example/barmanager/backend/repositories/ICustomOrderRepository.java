@@ -7,13 +7,17 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface ICustomOrderRepository
-{
+public interface ICustomOrderRepository {
     Order saveNewOrder(Order order);
+
     List<Document> getTenMostOrderedDrinks();
+
     List<Document> getProfitsByYear(int year);
+
     boolean deleteOrder(Order order);
+
     Order closeOrder(Order order);
+
     Optional<Order> findCloseBySeat(int seatNumber);
 
 }

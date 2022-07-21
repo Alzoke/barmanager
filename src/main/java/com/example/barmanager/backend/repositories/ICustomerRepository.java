@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface ICustomerRepository extends MongoRepository<Customer, String> {
     Optional<Customer> findByIdNumber(int idNumber);
-
 }

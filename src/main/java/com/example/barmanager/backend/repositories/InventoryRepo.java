@@ -9,21 +9,27 @@ import java.util.List;
 public interface InventoryRepo extends MongoRepository<BarDrink, String> {
 
     List<BarDrink> findAllByCategory(String category);
+
     List<BarDrink> findAllByIngredientsContains(String ingredient);
-    default BarDrink updateDrink(String id, BarDrink newDrink){
+
+    default BarDrink updateDrink(String id, BarDrink newDrink) {
         BarDrink oldDrink = findById(id).orElse(newDrink);
 
         //new BarDrink was created because the DB didn't have drink with the corresponding id.
-        if (oldDrink.equals(newDrink)){
+        if (oldDrink.equals(newDrink)) {
             oldDrink.setId(id);
             save(oldDrink);
             return oldDrink;
         }
 
+        // Update the oldDrink only with parameters presented in newDrink,
+        // if they are not presented in newDrink we keep the old ones from oldDrink
         UpdateUtil.copyNullProperties(newDrink, oldDrink);
         save(oldDrink);
         return oldDrink;
     }
+
     List<BarDrink> findByPriceBetween(Double lower, Double upper);
+
     List<BarDrink> findByOrderByPriceAsc();
 }

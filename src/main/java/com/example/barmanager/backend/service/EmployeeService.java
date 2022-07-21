@@ -3,7 +3,7 @@ package com.example.barmanager.backend.service;
 import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
-import com.example.barmanager.backend.repositories.CustomBrunchRepository;
+import com.example.barmanager.backend.repositories.CustomBranchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.repositories.IEmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeService
 {
-    private final CustomBrunchRepository customBrunchRepository;
+    private final CustomBranchRepository customBrunchRepository;
     private final IBrunchRepository brunchRepository;
     private final IEmployeeRepository employeeRepository;
 
-    public EmployeeService(CustomBrunchRepository customBrunchRepository, IBrunchRepository brunchRepository, IEmployeeRepository employeeRepository)
+    public EmployeeService(CustomBranchRepository customBrunchRepository, IBrunchRepository brunchRepository, IEmployeeRepository employeeRepository)
     {
         this.customBrunchRepository = customBrunchRepository;
         this.brunchRepository = brunchRepository;

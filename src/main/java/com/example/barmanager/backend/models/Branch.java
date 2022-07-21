@@ -1,4 +1,5 @@
 package com.example.barmanager.backend.models;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -12,9 +13,9 @@ import java.util.Objects;
 @Data
 @Document("Branches")
 @NoArgsConstructor
-public class Branch
-{
-    @Id private String id;
+public class Branch {
+    @Id
+    private String id;
     private String branchName;
     private String city;
     private String country;
@@ -24,8 +25,7 @@ public class Branch
 
     private List<String> employeesIds;
 
-    public Branch(String brunchName,String country,String city)
-    {
+    public Branch(String brunchName, String country, String city) {
         this.branchName = brunchName;
         this.country = country;
         this.city = city;
@@ -33,17 +33,15 @@ public class Branch
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if ( this == o ) return true;
-        if ( !(o instanceof Branch) ) return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Branch)) return false;
         Branch branch = (Branch) o;
         return Objects.equals(getId(), branch.getId()) && Objects.equals(getBranchName(), branch.getBranchName()) && Objects.equals(getOrders(), branch.getOrders()) && Objects.equals(getEmployeesIds(), branch.getEmployeesIds());
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getId(), getBranchName(), getOrders(), getEmployeesIds());
     }
 }

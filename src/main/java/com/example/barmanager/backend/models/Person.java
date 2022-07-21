@@ -10,8 +10,7 @@ public abstract class Person {
     private String firstName;
     private String lastName;
 
-    public Person(int idNumber, String firstName, String lastName)
-    {
+    public Person(int idNumber, String firstName, String lastName) {
         this.idNumber = idNumber;
         this.firstName = firstName;
         this.lastName = lastName;

@@ -1,7 +1,6 @@
 package com.example.barmanager.backend.models;
 
-public enum eOrderStatus
-{
+public enum eOrderStatus {
     Open,
     Close,
 }

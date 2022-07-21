@@ -10,8 +10,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Document("barinventory")
-public class BarDrink{
-    @Id public String id;
+public class BarDrink {
+    @Id
+    public String id;
     public String idInApi;
     public String name;
     public String category;
@@ -34,8 +35,7 @@ public class BarDrink{
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "BarDrink{" +
                 "id='" + id + '\n' +
                 ", idInApi='" + idInApi + '\n' +

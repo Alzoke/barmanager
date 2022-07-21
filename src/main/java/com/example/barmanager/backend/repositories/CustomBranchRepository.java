@@ -16,39 +16,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * contains utilities quires and functions to easy work with the DB
- *   and enable complicate work with the DB
+ * class that implements  ICustomBranchRepository
+ * contains custom queries and functions that works with the DB
  */
 @Component
-public class CustomBrunchRepository implements ICustomBrunchRepository
-{
+public class CustomBranchRepository implements ICustomBranchRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private IEmployeeRepository employeeRepository;
-    private final Logger logger = LoggerFactory.getLogger(CustomBrunchRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(CustomBranchRepository.class);
 
     /**
-     * custom function that insert employee to brunch and make branch contain this employee
+     * custom function which inserts employee to a branch and make branch contain this employee
      * many-to-many relationship
      *
-     * @param brunch   where employee should be inserted
+     * @param branch   where employee should be inserted
      * @param employee to be inserted
      */
     @Override
-    public void addEmployee(Branch brunch, Employee employee)
-    {
-        // first direction (brunch -> employee)
-        employee.getBranches().add(brunch);
+    public void addEmployee(Branch branch, Employee employee) {
+        // first direction (branch -> employee)
+        employee.getBranches().add(branch);
         UpdateResult updateResultBrunch = mongoTemplate.update(Branch.class)
-                .matching(Criteria.where("_id").is(brunch.getId()))
+                .matching(Criteria.where("_id").is(branch.getId()))
                 .apply(new Update().push("employeesIds", employee.getId())).first();
         logger.info(updateResultBrunch.toString());
 
-        // second direction (employee -> brunch)
+        // second direction (employee -> branch)
         UpdateResult updateResultEmployee = mongoTemplate.update(Employee.class)
                 .matching(Criteria.where("_id").is(employee.getId()))
-                .apply(new Update().push("branches", brunch)).first();
+                .apply(new Update().push("branches", branch)).first();
         logger.info(updateResultEmployee.toString());
 
     }
@@ -57,14 +55,13 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
      * function that insert order to specific branch
      * may need to be deleted
      *
-     * @param brunch
+     * @param branch
      * @param order
      */
     @Override
-    public void addOrder(Branch brunch, Order order)
-    {
+    public void addOrder(Branch branch, Order order) {
         UpdateResult updateResultBrunch = mongoTemplate.update(Branch.class)
-                .matching(Criteria.where("_id").is(brunch.getId()))
+                .matching(Criteria.where("_id").is(branch.getId()))
                 .apply(new Update().push("orders", order)).first();
         logger.info(updateResultBrunch.toString());
     }
@@ -72,12 +69,11 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     /**
      * function that remove employee from DB from specific branch
      *
-     * @param branch  to remove from
+     * @param branch   to remove from
      * @param employee to be removed
      */
     @Override
-    public void removeEmployee(Branch branch, Employee employee)
-    {
+    public void removeEmployee(Branch branch, Employee employee) {
 //        List<String> employeesIds = branch.getEmployeesIds().stream()
 //                .filter(employeeId -> employeeId != employee.getId())
 //                .collect(Collectors.toList());
@@ -104,12 +100,12 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     /**
      * function that responsible to
      * updating employee data in the DB
+     *
      * @param employee to be updated
      * @return the updated employee
      */
     @Override
-    public Employee updateEmployee(Employee employee)
-    {
+    public Employee updateEmployee(Employee employee) {
         Update update = new Update();
         update.set("salaryPerHour", employee.getSalaryPerHour());
         update.set("idNumber", employee.getIdNumber());
@@ -127,13 +123,13 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
     /**
      * function which responsible to pop out employee
      * from given branch
-     * @param branch requested branch
+     *
+     * @param branch             requested branch
      * @param employeeIdToRemove id of the requested employee
-     *  @return boolean indicate whether the action succeeded or not
+     * @return boolean indicate whether the action succeeded or not
      */
     @Override
-    public boolean deleteEmployee(Branch branch, String employeeIdToRemove)
-    {
+    public boolean deleteEmployee(Branch branch, String employeeIdToRemove) {
         // first direction -> removing employee from current employees in the given branch
         List<String> employeesIds = branch.getEmployeesIds();
         List<String> updatedEmployees = employeesIds.stream().filter(id ->
@@ -158,12 +154,10 @@ public class CustomBrunchRepository implements ICustomBrunchRepository
      * @return boolean that indicates if deleted or not
      */
     @Override
-    public boolean removeBranch(Branch branch)
-    {
+    public boolean removeBranch(Branch branch) {
         List<String> employeesIds = branch.getEmployeesIds();
         // removing branch from branch list of each employee which belongs to this branch
-        for ( String employeesId : employeesIds )
-        {
+        for (String employeesId : employeesIds) {
             Employee employee = employeeRepository.findById(employeesId)
                     .orElseThrow(() -> new EmployeeNotFoundException(employeesId));
             employee.getBranches().remove(branch);

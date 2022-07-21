@@ -30,15 +30,12 @@ public class CocktailDBAPIService {
         this.template = templateBuilder.build();
     }
 
-
-    /*
-        partialDrinks drink objects with the following format :
-        {   strDrink: drinkName,
-            strDrinkThumb: drinkThumb,
-            idDrink : drinkId
-        }
-        And not the full drink , so we have to fetch full drinks.
-    */
+    /**
+     * Some responses from CocktailDBAPI returns objects which represent only the drink name , thumb and id.
+     * this method receives those objects and fetches a "full" Drinks objects from the API.
+     * @param partialDrinks partial drink objects
+     * @return List of "full" Drink objects
+     */
     private List<ApiDrink> getActualDrinks(List<ApiDrink> partialDrinks)  {
         List<ApiDrink> actualDrinks = new ArrayList<>();
 
@@ -49,10 +46,13 @@ public class CocktailDBAPIService {
                 e.printStackTrace();
             }
         }
-
         return actualDrinks;
     }
 
+    /**
+     * Fetch every possible ingredient name from CocktailDBAPI
+     * @return CompletableFuture of the api response which is a list of ingredient names.
+     */
     @Async
     public CompletableFuture<List<String>> fetchDrinkIngredients(){
         List<String> ingredients = new ArrayList<>();
@@ -67,6 +67,10 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(ingredients);
     }
 
+    /**
+     * Fetch every possible category name from CocktailDBAPI
+     * @return CompletableFuture of the api response which is a list of category names.
+     */
     @Async
     public CompletableFuture<List<String>> fetchDrinkCategories(){
         List<String> categoryNames = new ArrayList<>();
@@ -81,6 +85,11 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(categoryNames);
     }
 
+    /**
+     * Fetch a collection of drinks from CocktailDBAPI filtered by category.
+     * @param categoryName the name of the category to filter the drinks by.
+     * @return CompletableFuture of a List of Drinks filtered by category.
+     */
     @Async
     public CompletableFuture<List<ApiDrink>> fetchDrinksListByCategory(String categoryName){
         this.logger.info("Fetching drinks with category : " + categoryName);
@@ -92,6 +101,11 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(drinks);
     }
 
+    /**
+     * Fetch a collection of drinks from CocktailDBAPI filtered by ingredient.
+     * @param ingredientName the name of the ingredient to filter the drinks by.
+     * @return CompletableFuture of a List of Drinks filtered by ingredient.
+     */
     @Async
     public CompletableFuture<List<ApiDrink>> fetchDrinksListByIngredient(String ingredientName){
         this.logger.info("Fetching drinks with ingredient : " + ingredientName);
@@ -103,6 +117,11 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(drinks);
     }
 
+    /**
+     * Fetch drink by id from CocktailDBAPI
+     * @param id the id corresponding to the drink.
+     * @return CompletableFuture of a Drink.
+     */
     @Async
     public CompletableFuture<ApiDrink> fetchDrinkById(String id){
         String url = String.format("https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=%s", id);
@@ -116,6 +135,11 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(cocktail);
     }
 
+    /**
+     * Fetch list of drinks by a name from CocktailDBAPI (the api response includes drinks which contain the requested name in its name).
+     * @param drinkName Drink name
+     * @return CompletableFuture of a list of Drinks.
+     */
     @Async
     public CompletableFuture<List<ApiDrink>> fetchDrinkByName(String drinkName){
         String url = String.format("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=%s", drinkName);
@@ -125,6 +149,10 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(cocktail);
     }
 
+    /**
+     * Fetch a random drink from CocktailDBAPI.
+     * @return CompletableFuture of Drink.
+     */
     @Async
     public CompletableFuture<ApiDrink> fetchRandomDrink(){
         String url = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
@@ -134,6 +162,11 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(randomDrink.drinks.get(0));
     }
 
+    /**
+     * Fetch a collection of drinks from CocktailDBAPI filtered by alcoholic filter.
+     * @param alcoholFilter the name of the alcoholic filter to filter the drinks by.
+     * @return CompletableFuture of a List of Drinks filtered by alcoholic filter.
+     */
     @Async
     public CompletableFuture<List<ApiDrink>> fetchDrinksByAlcoholic(String alcoholFilter){
         String url = String.format("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=%s", alcoholFilter);
@@ -145,6 +178,13 @@ public class CocktailDBAPIService {
         return CompletableFuture.completedFuture(drinks);
     }
 
+    /**
+     * Fetch every available drink from CocktailDBAPI,
+     * the API does not include a request for fetching all the drinks ,
+     * so fetchAllDrinks fetches drinks filtered by category for every category available in the API
+     * which guarantees all the drinks gets fetched.
+     * @return CompletableFuture of a List of Drinks
+     */
     @Async
     public CompletableFuture<List<ApiDrink>> fetchAllDrinks(){
         List<ApiDrink> apiDrinks = new ArrayList<>();

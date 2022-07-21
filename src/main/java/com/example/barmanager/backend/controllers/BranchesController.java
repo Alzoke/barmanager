@@ -5,7 +5,7 @@ import com.example.barmanager.backend.assemblers.BranchDtoAssembler;
 import com.example.barmanager.backend.exceptions.BranchNotFoundException;
 import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.BranchDto;
-import com.example.barmanager.backend.repositories.CustomBrunchRepository;
+import com.example.barmanager.backend.repositories.CustomBranchRepository;
 import com.example.barmanager.backend.repositories.IBrunchRepository;
 import com.example.barmanager.backend.service.BranchService;
 import org.springframework.hateoas.CollectionModel;
@@ -34,12 +34,12 @@ public class BranchesController {
     private final BranchDtoAssembler branchDtoAssembler;
     private final IBrunchRepository branchRepository;
     private final BranchService branchService;
-    private final CustomBrunchRepository customBrunchRepository;
+    private final CustomBranchRepository customBrunchRepository;
 
     public BranchesController(BranchAssembler brunchAssembler,
                               BranchDtoAssembler brunchDtoAssembler,
                               IBrunchRepository brunchRepository, BranchService branchService,
-                              CustomBrunchRepository customBrunchRepository) {
+                              CustomBranchRepository customBrunchRepository) {
         this.brunchAssembler = brunchAssembler;
         this.branchDtoAssembler = brunchDtoAssembler;
         this.branchRepository = brunchRepository;
@@ -175,7 +175,7 @@ public class BranchesController {
     public ResponseEntity<EntityModel<Branch>> createBranch(@RequestBody Branch newBranch) {
         newBranch.setEmployeesIds(new ArrayList<>());
         // saving new branch into DB
-        Branch savedBranch = branchService.saveBranchToDB(newBranch);
+        Branch savedBranch = branchRepository.save(newBranch);
 
         return ResponseEntity.created(linkTo(methodOn(BranchesController.class)
                         .getBrunch(savedBranch.getId())).toUri())
@@ -191,7 +191,7 @@ public class BranchesController {
     @DeleteMapping("/branches/{id}")
     public ResponseEntity<?> deleteBranch(@PathVariable String id) {
         // find the requested branch or throw  BranchNotFoundException  exception
-        Branch branchToDelete = branchService.findBranchById(id);
+        Branch branchToDelete = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException(id));
 
         // performs the removing logic
         boolean isDeleted = customBrunchRepository.removeBranch(branchToDelete);
@@ -200,7 +200,7 @@ public class BranchesController {
         if (isDeleted) {
             return ResponseEntity.ok(branchEntityModel);
         } else {
-            return ResponseEntity.badRequest().body("cant remove desire branch");
+            return ResponseEntity.badRequest().body("cant remove desired branch");
         }
     }
 }

@@ -4,7 +4,7 @@ import com.example.barmanager.backend.models.Branch;
 import com.example.barmanager.backend.models.Employee;
 import com.example.barmanager.backend.models.Order;
 
-public interface ICustomBrunchRepository
+public interface ICustomBranchRepository
 {
     void addEmployee(Branch brunch, Employee employee);
     void addOrder(Branch brunch, Order order);

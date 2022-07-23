@@ -117,7 +117,6 @@ public class SeedDB implements CommandLineRunner {
 
         logger.info("saving order " + saveNewOrder);
 
-
     }
 
     private void createOrders(Customer customer, int year) {
@@ -141,7 +140,7 @@ public class SeedDB implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        executeSeed();
+//        executeSeed();
     }
 
     private void executeSeed() throws InterruptedException, ExecutionException {

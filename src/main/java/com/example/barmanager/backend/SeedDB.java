@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -188,12 +187,18 @@ public class SeedDB implements CommandLineRunner {
                     apiDrink.getStrAlcoholic(),
                     ingredients,
                     apiDrink.getStrDrinkThumb(),
-                    rand.nextDouble(150.0),
+                    randPriceFormatter(rand),
                     apiDrink.getStrGlass()
             ));
         }
         barDrinkRepo.saveAll(barDrinks);
         createOrders(customer, 2021);
         createOrders(customer, 2022);
+    }
+
+    private double randPriceFormatter(Random rand)
+    {
+        double randPrice = rand.nextDouble(150.0);
+        return Double.parseDouble(String.format("%.2f",randPrice));
     }
 }

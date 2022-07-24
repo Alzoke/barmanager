@@ -42,21 +42,3 @@ This project is a final project in a server-side development course via  spring 
 
 
 
-
-### Images
-
-![HomeView](src/main//resources//images//ProjectImages//HomeView.png)
-
-![BranchesView](src/main//resources//images//ProjectImages//BranchesView.png)
-
-![InventoryManagement](src/main//resources//images//ProjectImages//InventoryManagement.png)
-
-![MenuView](src/main//resources//images//ProjectImages//MenuView.png)
-
-![OrderView](src/main//resources//images//ProjectImages//OrderView.png)
-
-![SeatsView](src/main//resources//images//ProjectImages//SeatsView.png)
-
-![InformationView](src/main//resources//images//ProjectImages//informationView.png)
-
-

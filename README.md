@@ -3,32 +3,60 @@
 
 ------------
 
-This project is a final project in a server-side development course in spring boot which is still under development.
+This project is a final project in a server-side development course via  spring boot.
 
 ------------
 
 ### Description
-A bar management system with over 400 drinks that uses an external API of drinks and cocktails. The system works with a "third party" (API) of drinks that simulates a supplier.
+- Full Stack Bar Management System which is capable to manage over 400 drinks at once.
+-  Uses external API of drinks and cocktails which simulates commercial supplier activity.
+- Simulates a bartender work.
+- Enables administrative and logistical work.
 
-# Structure 
-The project  consist of 2 part2: restful web server (API) and client that communicate with this API
--   Server: Spring Boot Server (Java) 
--  DB: MongoDB (Atlas)
--  Client: Vaadin framework for GUI development 
-####  Main concepts: 
-- MVC architecture
-- Asynchronous work
-- design patterns
-- RESTful web server
-- services
+
+# Structure
+	Server side - Spring boot server
+	DB  - MongoDB
+	Client -  Vaadin framework 
+
+
+####  Main concepts:
+	MVC architecture
+	Asynchronous work.
+	design patterns –  singleton, factory.
+	RESTful web server.
+	services.
+
+
   ### Functionality 
-  1.  Creating a menu for the bar by external inventory of drinks (adding, removing, placing, and updating prices) 
-  2.	Managing orders of bar customers (taking orders for each customer, making a payment, and closing them) 
-  3.  User Management – Bar Manager, Bartender, Customer (under development)
-  4.	Drink & cocktails inventory management – logistics (under development)
-  5.	Generating statistical reports (under development)
+	- Creating bar menu by an external inventory of drinks (adding, removing  and updating prices)
+	- Managing customers orders  - taking orders form customer, taking payment.
+	- Employees Management – Bartender can work in many branches  - many to many
+	- Branches Management – create, remove & update branch, add & remove barman from branch 
+	- Drink & cocktails inventory management
+	- Generating statistical reports 
 
 
 
+### [Front End](https://github.com/NatanGer97/BarManagarFront "Front End")
+
+
+
+
+### Images
+
+![HomeView](src/main//resources//images//ProjectImages//HomeView.png)
+
+![BranchesView](src/main//resources//images//ProjectImages//BranchesView.png)
+
+![InventoryManagement](src/main//resources//images//ProjectImages//InventoryManagement.png)
+
+![MenuView](src/main//resources//images//ProjectImages//MenuView.png)
+
+![OrderView](src/main//resources//images//ProjectImages//OrderView.png)
+
+![SeatsView](src/main//resources//images//ProjectImages//SeatsView.png)
+
+![InformationView](src/main//resources//images//ProjectImages//informationView.png)
 
 
